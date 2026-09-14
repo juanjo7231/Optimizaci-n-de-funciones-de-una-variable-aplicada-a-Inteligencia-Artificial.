@@ -4,26 +4,28 @@ import sympy as sp
 st.title("🧮 Solucionador de Optimización de una Variable")
 st.write("Ingresa una función y esta herramienta te ayudará a resolver el problema de optimización paso a paso: derivada, puntos críticos y clasificación.")
 
-
+# Definir la variable simbólica
 x = sp.Symbol('x', real=True)
 
+# Campo para que el usuario ingrese la función
 funcion_str = st.text_input("Ingresa la función f(x) (ejemplo: x**3 - 3*x + 2):", "x**3 - 3*x + 2")
 
 if funcion_str:
     try:
-
+        # Convertir el texto del usuario en una expresión matemática de SymPy
         f_expr = sp.sympify(funcion_str)
         
         st.markdown("---")
         st.subheader("1. Función analizada")
         st.latex(f"f(x) = {sp.latex(f_expr)}")
         
-
+        # Paso 2: Calcular la primera derivada
         f_prime = sp.diff(f_expr, x)
         st.subheader("2. Primera Derivada f'(x)")
         st.write("Calculamos la derivada para encontrar las posibles pendientes cero:")
         st.latex(f"f'(x) = {sp.latex(f_prime)}")
         
+        # Paso 3: Encontrar puntos críticos (igualar a 0)
         st.subheader("3. Puntos Críticos")
         st.write("Igualamos la primera derivada a cero ($f'(x) = 0$) para hallar los valores críticos:")
         
@@ -34,13 +36,14 @@ if funcion_str:
             for pc in puntos_criticos:
                 st.latex(f"x = {sp.latex(pc)}")
                 
+            # Paso 4: Criterio de la segunda derivada para clasificar
             st.subheader("4. Clasificación (Criterio de la Segunda Derivada)")
             f_double_prime = sp.diff(f_prime, x)
             st.write("Evaluamos la segunda derivada $f''(x)$ en los puntos críticos:")
             st.latex(f"f''(x) = {sp.latex(f_double_prime)}")
             
             for pc in puntos_criticos:
-
+                # Evaluar la segunda derivada en el punto crítico
                 val_segunda = f_double_prime.subs(x, pc)
                 val_y = f_expr.subs(x, pc)
                 
