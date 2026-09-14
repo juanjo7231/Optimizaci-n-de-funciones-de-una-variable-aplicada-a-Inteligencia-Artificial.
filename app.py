@@ -16,7 +16,6 @@ st.markdown("""
         background-color: #F4F7F5;
         color: #1E293B;
     }
-    /* Contenedor maestro unificado para evitar huecos raros */
     .main-container {
         background-color: #FFFFFF;
         border-radius: 12px;
@@ -25,7 +24,6 @@ st.markdown("""
         overflow: hidden;
         margin-bottom: 20px;
     }
-    /* Cabecera integrada */
     .uis-header {
         background-color: #007A33;
         color: white;
@@ -34,11 +32,9 @@ st.markdown("""
         align-items: center;
         justify-content: space-between;
     }
-    /* Cuerpo interno de la tarjeta */
     .uis-body {
         padding: 25px;
     }
-    /* Burbujas y cajas de pasos */
     .tip-box {
         background-color: #E2F6EC;
         border-left: 5px solid #007A33;
@@ -80,14 +76,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Función para corregir sintaxis matemática de forma segura
 def limpiar_sintaxis_matematica(expresion: str) -> str:
     exp = expresion.replace("^", "**")
     exp = re.sub(r'([a-zA-Z])(\d+)', r'\1**\2', exp)
     exp = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', exp)
     return exp
 
-# Inicializar estados de sesión
 if "historial_problemas" not in st.session_state:
     st.session_state.historial_problemas = []
 if "problema_activo" not in st.session_state:
@@ -128,7 +122,6 @@ x = sp.Symbol('x', real=True)
 # --- ESTRUCTURA MAESTRA UNIFICADA ---
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
-# Cabecera dentro del contenedor unificado
 st.markdown("""
     <div class="uis-header">
         <div>
@@ -139,7 +132,6 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Cuerpo de la tarjeta
 st.markdown('<div class="uis-body">', unsafe_allow_html=True)
 
 if st.session_state.problema_activo:
@@ -179,16 +171,18 @@ if st.session_state.problema_activo:
 
 else:
     st.markdown("""
-        <p style="color: #475569; font-size: 15px; margin-bottom: 20px;">Bienvenido al módulo de cálculo y optimización. Ingresa la función objetivo de tu problema para recibir guía analítica, pistas de razonamiento y el desglose paso a paso.</p>
+        <p style="color: #475569; font-size: 15px; margin-bottom: 20px;">Bienvenido al módulo de cálculo y optimización. Ingresa la función objetivo de tu problema expresada en función de <b>x</b> para recibir guía analítica, pistas y el desglose paso a paso.</p>
     """, unsafe_allow_html=True)
     
     enunciado_user = st.text_area("Enunciado o contexto del problema (Opcional):", placeholder="Ej: Determinar las dimensiones para maximizar el área...", height=90)
-    funcion_str = st.text_input("Función objetivo $f(x)$:", placeholder="Ej: 2x3 - 15x2 + 36*x")
+    funcion_str = st.text_input("Función objetivo $f(x)$:", placeholder="Ej: x*(40 - 2*x)")
     
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("⚡ Iniciar Análisis de Optimización", use_container_width=True):
         if not funcion_str.strip():
             st.warning("⚠️ Por favor ingresa una función matemática válida.")
+        elif "=" in funcion_str or "y" in funcion_str.lower():
+            st.error("⚠️ Ojo aquí: Este asistente resuelve funciones de **una sola variable (en términos de x)**. Si tienes una ecuación con 'y' o un signo '=', debes despejar la variable y escribir únicamente la expresión final en términos de x (por ejemplo, en lugar de 2x + y = 40, ingresa la función ya sustituida como x*(40-2*x)).")
         else:
             try:
                 funcion_saneada = limpiar_sintaxis_matematica(funcion_str)
@@ -255,5 +249,5 @@ else:
             except Exception as e:
                 st.error(f"⚠️ Error al interpretar la función. Revisa la sintaxis. Detalle: {e}")
 
-st.markdown('</div>', unsafe_allow_html=True) # Cierra uis-body
-st.markdown('</div>', unsafe_allow_html=True) # Cierra main-container
+st.markdown('</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
