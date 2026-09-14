@@ -139,26 +139,17 @@ if st.session_state.problema_activo:
     st.markdown("**Función Objetivo:**")
     st.latex(f"f(x) = {prob['funcion_latex']}")
     
-    st.markdown("### 🧠 Pistas y Tips Personalizados para este Ejercicio:")
+    st.markdown("### 🧠 Pistas y Tips para Pensar el Ejercicio:")
     
-    # Renderizamos todo el contenido de los tips dentro de un único bloque HTML unificado
-    st.markdown(f"""
+    # Pistas conceptuales y limitadas (sin dar la respuesta directa)
+    st.markdown("""
         <div class="tip-box-clean">
-            <p style="margin-bottom: 12px;"><b>💡 Tip 1: Naturaleza de la función.</b><br>Estamos analizando una expresión algebraica en términos de <i>x</i>. Su comportamiento nos dirá dónde se encuentran los puntos óptimos.</p>
-            <p style="margin-bottom: 6px;"><b>💡 Tip 2: Derivación analítica.</b><br>Al calcular la primera derivada obtenemos la tasa de cambio:</p>
+            <p style="margin-bottom: 12px;"><b>💡 Pista 1: Visualiza la forma geométrica.</b><br>Piensa en qué tipo de curva representa tu función (por ejemplo, ¿su gráfica abre hacia arriba o hacia abajo?). Eso te da una pista intuitiva de si vas a encontrar un valor máximo o mínimo.</p>
+            <p style="margin-bottom: 12px;"><b>💡 Pista 2: El papel de la pendiente.</b><br>Recuerda qué representa gráficamente la primera derivada en el punto más alto o más bajo de una colina.</p>
+            <p style="margin-bottom: 12px;"><b>💡 Pista 3: Planteamiento del punto crítico.</b><br>Intenta calcular la derivada de tu función por tu cuenta e igualarla a cero. ¿Qué valor despejas para <i>x</i>?</p>
+            <p style="margin-bottom: 0px;"><b>💡 Pista 4: La prueba de la curvatura.</b><br>Antes de asegurar nada, revisa la segunda derivada para confirmar si el punto hallado es realmente una cima o un valle.</p>
         </div>
     """, unsafe_allow_html=True)
-    
-    st.latex(f"f'(x) = {prob['f_prime_latex']}")
-    
-    st.markdown(f"""
-        <div class="tip-box-clean">
-            <p style="margin-bottom: 12px;"><b>💡 Tip 3: Búsqueda del punto crítico.</b><br>Igualando <i>f'(x) = 0</i>, buscamos los valores donde la pendiente se anula.</p>
-            <p style="margin-bottom: 6px;"><b>💡 Tip 4: Criterio de concavidad.</b><br>La segunda derivada evaluada nos revelará la curvatura a través de:</p>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    st.latex(f"f''(x) = {prob['f_double_prime_latex']}")
     
     if not st.session_state.mostrar_solucion:
         st.markdown("<br>", unsafe_allow_html=True)
@@ -190,7 +181,7 @@ if st.session_state.problema_activo:
 
 else:
     st.markdown("""
-        <p style="color: #475569; font-size: 15px; margin-bottom: 20px;">Bienvenido al módulo de cálculo y optimización. Ingresa la función objetivo de tu problema expresada en función de <b>x</b> para recibir guía analítica, pistas personalizadas y el desglose paso a paso.</p>
+        <p style="color: #475569; font-size: 15px; margin-bottom: 20px;">Bienvenido al módulo de cálculo y optimización. Ingresa la función objetivo de tu problema expresada en función de <b>x</b> para recibir guía analítica, pistas conceptuales y el desglose paso a paso.</p>
     """, unsafe_allow_html=True)
     
     enunciado_user = st.text_area("Enunciado o contexto del problema (Opcional):", placeholder="Ej: Determinar las dimensiones para maximizar el área...", height=90)
@@ -276,8 +267,6 @@ else:
                         "titulo": enunciado_user[:25] if enunciado_user else f"Función: {funcion_str[:15]}",
                         "enunciado": enunciado_user if enunciado_user else "Análisis de optimización directa.",
                         "funcion_latex": sp.latex(f_expr),
-                        "f_prime_latex": sp.latex(f_prime),
-                        "f_double_prime_latex": sp.latex(f_double_prime),
                         "pasos_narrativos": pasos_narrativos
                     }
                     st.session_state.historial_problemas.append(nuevo_item)
