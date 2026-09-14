@@ -17,14 +17,12 @@ st.markdown("""
         background-color: #F8FAFC;
         color: #1E293B !important;
     }
-    /* Asegurar que el texto dentro del chat sea oscuro y legible */
     .stChatMessage {
         color: #1E293B !important;
     }
     .stChatMessage p, .stChatMessage span, .stChatMessage div {
         color: #1E293B !important;
     }
-    /* Corrección para que el input del chat se lea bien */
     .stChatInput input {
         color: #1E293B !important;
         background-color: #FFFFFF !important;
@@ -67,13 +65,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def limpiar_sintaxis_matematica(expresion: str) -> str:
-    # Limpieza preventiva por si escriben cosas como R(x) = ... o texto extraño
     exp = expresion.strip()
     if "=" in exp:
         parts = exp.split("=")
-        exp = parts[-1] # Tomar la parte derecha de la ecuación
+        exp = parts[-1]
     
-    # Remover declaraciones de funciones tipo R(x), f(x), etc.
     exp = re.sub(r'^[a-zA-Z_][a-zA-Z0-9_]*\s*\([xX]\)\s*=', '', exp)
     
     exp = exp.replace("^", "**")
@@ -92,10 +88,14 @@ if "mostrar_solucion" not in st.session_state:
 
 # --- BARRA LATERAL ---
 with st.sidebar:
-    try:
-        st.image("logo_uis.webp", use_container_width=True)
-    except:
-        st.info("💡 Sube tu 'logo_uis.webp' al directorio para ver el escudo.")
+    nombre_logo_sidebar = "logo-universidad-industrial-de-santander.webp"
+    if os.path.exists(nombre_logo_sidebar):
+        st.image(nombre_logo_sidebar, use_container_width=True)
+    else:
+        try:
+            st.image("logo_uis.webp", use_container_width=True)
+        except:
+            st.info("💡 Sube tu 'logo-universidad-industrial-de-santander.webp' al directorio.")
         
     st.markdown("### 🤖 Sesiones de Chat")
     if st.button("➕ Nueva Conversación", use_container_width=True):
@@ -123,16 +123,18 @@ x = sp.Symbol('x', real=True)
 # --- ENCABEZADO CON LOGO CIRCULAR Y TÍTULO ---
 col_head1, col_head2 = st.columns([0.12, 0.88])
 with col_head1:
-    if os.path.exists("logo_uis.webp"):
-        # Mostramos el logo con estilo circular usando HTML/CSS
-        st.markdown("""
+    nombre_logo = "logo-universidad-industrial-de-santander.webp"
+    if os.path.exists(nombre_logo):
+        st.markdown(f"""
             <div style="display: flex; align-items: center; justify-content: center; margin-top: 5px;">
-                <img src="app/static/logo_uis.webp" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #007A33;">
+                <img src="app/static/{nombre_logo}" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #007A33;">
             </div>
         """, unsafe_allow_html=True)
-        # Como respaldo por si el path estático varía en Streamlit local, si no carga el html mostramos la imagen normal
     else:
-        st.image("logo_uis.webp", width=45)
+        try:
+            st.image(nombre_logo, width=45)
+        except:
+            st.info("💡 Sube tu logo.")
 
 with col_head2:
     st.markdown("""
