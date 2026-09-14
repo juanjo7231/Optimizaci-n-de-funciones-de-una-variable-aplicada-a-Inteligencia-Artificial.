@@ -90,7 +90,7 @@ st.markdown("""
     
     .stButton > button:active {
         transform: translateY(0px) !important;
-        box-shadow: c0 2px 6px rgba(0, 122, 51, 0.3) !important;
+        box-shadow: 0 2px 6px rgba(0, 122, 51, 0.3) !important;
     }
 
     /* Estilo para redondear la imagen nativa del logo circular */
@@ -246,7 +246,7 @@ if st.session_state.problema_activo:
 
 else:
     with st.chat_message("assistant", avatar="🧠"):
-        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función matemática o problema de optimización quieres que analicemos hoy?")
+        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función matemática o problema de optimización **en una sola variable** quieres que analicemos hoy?")
     
     user_input = st.chat_input("Escribe tu función f(x) o el contexto del problema...")
     
