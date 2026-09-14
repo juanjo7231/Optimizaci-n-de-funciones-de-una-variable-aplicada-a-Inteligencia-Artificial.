@@ -138,19 +138,19 @@ if st.session_state.problema_activo:
     st.markdown("---")
     st.markdown("### 🧠 Pistas y Tips de Resolución (Paso 1):")
     
-    # Tips claros y con lenguaje humano, sin etiquetas rotas
+    # Renderizamos los tips dentro de un contenedor limpio de HTML bien estructurado sin tags rotos
     st.markdown("""
         <div class="tip-box">
-            <p><b>💡 Tip 1: ¿Qué representa la función?</b><br>
+            <p style="margin-bottom: 12px;"><b>💡 Tip 1: ¿Qué representa la función?</b><br>
             La verdad, cuando nos dan la función ya lista, lo primero es pensar que estamos buscando los puntos más altos (cima) o más bajos (valle) de esa curva. No te afanes, piensa en el comportamiento general de la gráfica.</p>
             
-            <p><b>💡 Tip 2: La derivada como la pendiente.</b><br>
+            <p style="margin-bottom: 12px;"><b>💡 Tip 2: La derivada como la pendiente.</b><br>
             Recuerda que derivar significa hallar cómo cambia la función en cada instante. Si bajas los exponentes a multiplicar y le restas uno, vas a encontrar la fórmula de la pendiente ($f'(x)$).</p>
             
-            <p><b>💡 Tip 3: ¿De dónde salen los puntos críticos?</b><br>
+            <p style="margin-bottom: 12px;"><b>💡 Tip 3: ¿De dónde salen los puntos críticos?</b><br>
             Imagínate la cumbre de una colina o el fondo de un valle: justo ahí, la pendiente es plana, es decir, vale cero. Por eso igualamos la primera derivada a cero para despejar nuestra $x$.</p>
             
-            <p><b>💡 Tip 4: El toque final con la segunda derivada.</b><br>
+            <p style="margin-bottom: 0px;"><b>💡 Tip 4: El toque final con la segunda derivada.</b><br>
             Para estar seguros de si es un máximo o un mínimo sin dibujar toda la gráfica, tomamos la segunda derivada ($f''(x)$) y evaluamos nuestros puntos. Si da negativo, es una cima; si da positivo, es un valle.</p>
         </div>
     """, unsafe_allow_html=True)
@@ -206,12 +206,12 @@ else:
                 # Construir el HTML detallado paso a paso exactamente como en la foto 3
                 html_paso_a_paso = f"""
                 <div class="step-box">
-                    <p style="font-weight: 700; color: #004D20; font-size: 16px;">Paso 1: Primera derivada y puntos críticos</p>
-                    <p>Se calcula la primera derivada de la función para encontrar las pendientes iguales a cero:</p>
-                    <div style="text-align: center; margin: 15px 0;">
-                        <code>f'(x) = {sp.latex(f_prime)}</code>
+                    <p style="font-weight: 700; color: #004D20; font-size: 16px; margin-bottom: 8px;">Paso 1: Primera derivada y puntos críticos</p>
+                    <p style="margin-bottom: 8px;">Se calcula la primera derivada de la función para encontrar las pendientes iguales a cero:</p>
+                    <div style="text-align: center; margin: 12px 0; font-family: monospace; font-size: 15px; background: #F1F5F9; padding: 8px; border-radius: 6px;">
+                        f'(x) = {sp.latex(f_prime)}
                     </div>
-                    <p>Igualando la primera derivada a cero para hallar los puntos críticos:</p>
+                    <p style="margin-top: 8px; margin-bottom: 8px;">Igualando la primera derivada a cero para hallar los puntos críticos:</p>
                 </div>
                 """
                 
@@ -228,30 +228,30 @@ else:
                             signo_str = "< 0" if val_seg < 0 else "> 0"
                             
                             detalle_evaluacion += f"""
-                            <div class="step-box">
-                                <p style="font-weight: 700; color: #1E293B;">Para $x = {x_num:.2f}$:</p>
-                                <p>Evaluamos en la segunda derivada: $f''({x_num:.2f}) = {val_seg:.2f}$ ({signo_str}).</p>
-                                <p>Como el resultado es {'negativo' if val_seg < 0 else 'positivo'}, existe un <b>{tipo_extremo}</b> en este punto.</p>
-                                <p>Evaluando en la función original: $f({x_num:.2f}) = {val_y:.2f}$.</p>
-                                <p><b>Coordenada del extremo:</b> $({x_num:.2f}, {val_y:.2f})$</p>
+                            <div class="step-box" style="background-color: #F8FAF9; border: 1px dashed #CBD5E1;">
+                                <p style="font-weight: 700; color: #1E293B; margin-bottom: 6px;">• Para x = {x_num:.2f}:</p>
+                                <p style="margin-bottom: 4px;">Evaluamos en la segunda derivada: f''({x_num:.2f}) = {val_seg:.2f} ({signo_str}).</p>
+                                <p style="margin-bottom: 4px;">Como el resultado es {'negativo' if val_seg < 0 else 'positivo'}, existe un <b>{tipo_extremo}</b> en este punto.</p>
+                                <p style="margin-bottom: 4px;">Evaluando en la función original: f({x_num:.2f}) = {val_y:.2f}.</p>
+                                <p style="margin-bottom: 0px;"><b>Coordenada del extremo:</b> ({x_num:.2f}, {val_y:.2f})</p>
                             </div>
                             """
                         except:
-                            detalle_evaluacion += f"<p>Punto crítico en $x = {pc}$</p>"
+                            detalle_evaluacion += f"<p>Punto crítico en x = {pc}</p>"
                 else:
                     detalle_evaluacion = "<p>No se encontraron puntos críticos reales.</p>"
                 
                 html_paso_a_paso += f"""
                 <div class="step-box">
-                    <p style="font-weight: 700; color: #004D20; font-size: 16px;">Paso 2: Segunda derivada</p>
-                    <p>Se obtiene la segunda derivada para aplicar el criterio correspondiente:</p>
-                    <div style="text-align: center; margin: 15px 0;">
-                        <code>f''(x) = {sp.latex(f_double_prime)}</code>
+                    <p style="font-weight: 700; color: #004D20; font-size: 16px; margin-bottom: 8px;">Paso 2: Segunda derivada</p>
+                    <p style="margin-bottom: 8px;">Se obtiene la segunda derivada para aplicar el criterio correspondiente:</p>
+                    <div style="text-align: center; margin: 12px 0; font-family: monospace; font-size: 15px; background: #F1F5F9; padding: 8px; border-radius: 6px;">
+                        f''(x) = {sp.latex(f_double_prime)}
                     </div>
                 </div>
                 
                 <div class="step-box">
-                    <p style="font-weight: 700; color: #004D20; font-size: 16px;">Paso 3: Evaluación y clasificación de extremos</p>
+                    <p style="font-weight: 700; color: #004D20; font-size: 16px; margin-bottom: 12px;">Paso 3: Evaluación y clasificación de extremos</p>
                     {detalle_evaluacion}
                 </div>
                 """
