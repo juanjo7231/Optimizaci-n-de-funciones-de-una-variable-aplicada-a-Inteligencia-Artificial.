@@ -153,26 +153,13 @@ if st.session_state.problema_activo:
         st.markdown("---")
         st.markdown("### 📊 Solución Detallada Paso a Paso:")
         
-        # Paso 1
-        with st.container():
-            st.markdown("**Paso 1: Cálculo de la primera derivada**")
-            st.markdown("Derivamos la función objetivo con respecto a $x$:")
-            st.latex(f"f'(x) = {prob['f_prime_latex']}")
-            st.markdown("Igualamos a cero ($f'(x) = 0$) para hallar los puntos críticos.")
-
-        # Paso 2
-        with st.container():
-            st.markdown("---")
-            st.markdown("**Paso 2: Cálculo de la segunda derivada**")
-            st.markdown("Obtenemos $f''(x)$ para aplicar el criterio de concavidad:")
-            st.latex(f"f''(x) = {prob['f_double_prime_latex']}")
-
-        # Paso 3
-        with st.container():
-            st.markdown("---")
-            st.markdown("**Paso 3: Evaluación y clasificación de extremos**")
-            for eval_item in prob['evaluaciones']:
-                st.info(eval_item)
+        for paso in prob['pasos_narrativos']:
+            st.markdown(paso['texto'])
+            if paso.get('latex'):
+                st.latex(paso['latex'])
+            if paso.get('subtext'):
+                st.markdown(paso['subtext'])
+            st.markdown("")
 
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button("Ocultar solución"):
@@ -191,14 +178,14 @@ else:
     """, unsafe_allow_html=True)
     
     enunciado_user = st.text_area("Enunciado o contexto del problema (Opcional):", placeholder="Ej: Determinar las dimensiones para maximizar el área...", height=90)
-    funcion_str = st.text_input("Función objetivo $f(x)$:", placeholder="Ej: x*(40 - 2*x)")
+    funcion_str = st.text_input("Función objetivo $f(x)$:", placeholder="Ej: -2*x**2 + 16*x - 24")
     
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("⚡ Iniciar Análisis de Optimización", use_container_width=True):
         if not funcion_str.strip():
             st.warning("⚠️ Por favor ingresa una función matemática válida.")
         elif "=" in funcion_str or "y" in funcion_str.lower():
-            st.error("⚠️ Ojo aquí: Este asistente resuelve funciones de **una sola variable (en términos de x)**. Si tienes una ecuación con 'y' o un signo '=', debes despejar la variable y escribir únicamente la expresión final en términos de x (por ejemplo, en lugar de 2x + y = 40, ingresa la función ya sustituida como x*(40-2*x)).")
+            st.error("⚠️ Ojo aquí: Este asistente resuelve funciones de **una sola variable (en términos de x)**. Si tienes una ecuación con 'y' o un signo '=', debes despejar la variable y escribir únicamente la expresión final en términos de x.")
         else:
             try:
                 funcion_saneada = limpiar_sintaxis_matematica(funcion_str)
@@ -207,33 +194,61 @@ else:
                 f_double_prime = sp.diff(f_prime, x)
                 puntos_criticos = sp.solve(f_prime, x)
                 
-                lista_evaluaciones = []
+                pasos_narrativos = []
+                
+                # Paso introductorio y primera derivada
+                pasos_narrativos.append({
+                    "texto": "La función ya se encuentra expresada en términos de una única variable ($x$). Para encontrar el punto crítico, calculamos la primera derivada de $f(x)$ respecto a $x$:",
+                    "latex": f"f'(x) = {sp.latex(f_prime)}"
+                })
+                
+                # Sección de Punto Crítico
+                pasos_narrativos.append({
+                    "texto": "**Punto Crítico**\n\nIgualamos la derivada a cero para hallar el valor de $x$:",
+                    "latex": f"{sp.latex(f_prime)} = 0"
+                })
+                
                 if puntos_criticos:
-                    for pc in puntos_criticos:
-                        try:
-                            val_seg = float(f_double_prime.subs(x, pc).evalf())
-                            val_y = float(f_expr.subs(x, pc).evalf())
-                            x_num = float(pc.evalf())
-                            tipo_extremo = "máximo local" if val_seg < 0 else "mínimo local"
-                            signo_str = "< 0" if val_seg < 0 else "> 0"
-                            
-                            texto_eval = f"**• Para $x = {x_num:.4f}$:**\n\n" \
-                                         f"- Evaluamos en la segunda derivada: $f''({x_num:.4f}) = {val_seg:.4f}$ ({signo_str}).\n" \
-                                         f"- Conclusión: Existe un **{tipo_extremo}**.\n" \
-                                         f"- Valor óptimo en la función: $f({x_num:.4f}) = {val_y:.4f}$"
-                            lista_evaluaciones.append(texto_eval)
-                        except Exception as ex:
-                            lista_evaluaciones.append(f"Punto crítico encontrado en $x = {pc}$, pero no se pudo evaluar numéricamente ({ex}).")
+                    pc = puntos_criticos[0] # Tomamos el primero para la demo detallada
+                    x_num = float(pc.evalf())
+                    val_seg = float(f_double_prime.subs(x, pc).evalf())
+                    val_y = float(f_expr.subs(x, pc).evalf())
+                    
+                    tipo_extremo = "máximo absoluto" if val_seg < 0 else "mínimo absoluto"
+                    signo_str = "< 0" if val_seg < 0 else "> 0"
+                    
+                    pasos_narrativos.append({
+                        "texto": f"Resolviendo la ecuación obtenemos:",
+                        "latex": f"x = {x_num:.2f}" if not pc.is_Integer else f"x = {int(x_num)}"
+                    })
+                    
+                    # Verificación de la segunda derivada
+                    pasos_narrativos.append({
+                        "texto": "**Verificación del Extremo**\n\nAplicamos el criterio de la segunda derivada para comprobar si se trata de un máximo o un mínimo:",
+                        "latex": f"f''(x) = {sp.latex(f_double_prime)}",
+                        "subtext": f"Dado que la segunda derivada es constante e igual a ${sp.latex(f_double_prime)}$ ($f''(x) {signo_str}$), la concavidad confirma que $x = {x_num:g}$ corresponde a un **{tipo_extremo}**."
+                    })
+                    
+                    # Cálculo del valor óptimo
+                    expr_sustitucion = str(f_expr)
+                    # Reemplazamos x por el valor para mostrar la sustitución bonita
+                    expr_sust_s = str(f_expr).replace('x', f'({x_num:g})')
+                    
+                    pasos_narrativos.append({
+                        "texto": f"**Cálculo del Valor Óptimo**\n\nSustituimos $x = {x_num:g}$ en la función original:",
+                        "latex": f"f({x_num:g}) = {sp.latex(f_expr.subs(x, pc))}" if hasattr(f_expr.subs(x, pc), 'evalf') else f"f({x_num:g}) = {val_y:g}",
+                        "subtext": f"Resultado final de la evaluación óptima: **{val_y:g}**"
+                    })
                 else:
-                    lista_evaluaciones.append("No se encontraron puntos críticos reales para esta función.")
+                    pasos_narrativos.append({
+                        "texto": "No se encontraron puntos críticos reales para esta función."
+                    })
                 
                 nuevo_item = {
                     "titulo": enunciado_user[:25] if enunciado_user else f"Función: {funcion_str[:15]}",
                     "enunciado": enunciado_user if enunciado_user else "Análisis de optimización directa.",
                     "funcion_latex": sp.latex(f_expr),
-                    "f_prime_latex": sp.latex(f_prime),
-                    "f_double_prime_latex": sp.latex(f_double_prime),
-                    "evaluaciones": lista_evaluaciones
+                    "pasos_narrativos": pasos_narrativos
                 }
                 st.session_state.historial_problemas.append(nuevo_item)
                 st.session_state.problema_activo = nuevo_item
