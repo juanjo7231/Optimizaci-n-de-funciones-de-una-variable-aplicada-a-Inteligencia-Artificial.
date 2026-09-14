@@ -1,20 +1,33 @@
 import streamlit as st
 import sympy as sp
 import re
+import os
 
 # Configuración de la página
 st.set_page_config(
     page_title="Asistente UIS - IA de Optimización",
-    page_icon="🤖",
+    page_icon="🧠",
     layout="centered"
 )
 
-# --- ESTILOS CSS ESTILO CHAT / IA ---
+# --- ESTILOS CSS CORREGIDOS (TEXTO VISIBLE Y ESTILO CHAT) ---
 st.markdown("""
     <style>
     .stApp {
         background-color: #F8FAFC;
-        color: #1E293B;
+        color: #1E293B !important;
+    }
+    /* Asegurar que el texto dentro del chat sea oscuro y legible */
+    .stChatMessage {
+        color: #1E293B !important;
+    }
+    .stChatMessage p, .stChatMessage span, .stChatMessage div {
+        color: #1E293B !important;
+    }
+    /* Corrección para que el input del chat se lea bien */
+    .stChatInput input {
+        color: #1E293B !important;
+        background-color: #FFFFFF !important;
     }
     .uis-header {
         background-color: #007A33;
@@ -33,7 +46,7 @@ st.markdown("""
         padding: 14px 16px;
         border-radius: 0 8px 8px 0;
         margin: 10px 0;
-        color: #1E293B;
+        color: #1E293B !important;
         font-size: 14px;
         line-height: 1.5;
     }
@@ -54,12 +67,21 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def limpiar_sintaxis_matematica(expresion: str) -> str:
-    exp = expresion.replace("^", "**")
+    # Limpieza preventiva por si escriben cosas como R(x) = ... o texto extraño
+    exp = expresion.strip()
+    if "=" in exp:
+        parts = exp.split("=")
+        exp = parts[-1] # Tomar la parte derecha de la ecuación
+    
+    # Remover declaraciones de funciones tipo R(x), f(x), etc.
+    exp = re.sub(r'^[a-zA-Z_][a-zA-Z0-9_]*\s*\([xX]\)\s*=', '', exp)
+    
+    exp = exp.replace("^", "**")
     exp = re.sub(r'([a-zA-Z0-9\)])\(', r'\1*(', exp)
     exp = re.sub(r'\)([a-zA-Z0-9])', r')*\1', exp)
     exp = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', exp)
     exp = re.sub(r'([a-zA-Z])(\d+)', r'\1**\2', exp)
-    return exp
+    return exp.strip()
 
 if "historial_problemas" not in st.session_state:
     st.session_state.historial_problemas = []
@@ -98,29 +120,43 @@ with st.sidebar:
 
 x = sp.Symbol('x', real=True)
 
-# --- ENCABEZADO TIPO CHAT IA ---
-st.markdown("""
-    <div class="uis-header">
-        <div>
-            <h3 style="margin: 0; color: white; font-size: 18px;">🤖 Asistente IA de Optimización</h3>
-            <span style="font-size: 12px; color: #E2F6EC;">Ingeniería en Inteligencia Artificial • UIS</span>
+# --- ENCABEZADO CON LOGO CIRCULAR Y TÍTULO ---
+col_head1, col_head2 = st.columns([0.12, 0.88])
+with col_head1:
+    if os.path.exists("logo_uis.webp"):
+        # Mostramos el logo con estilo circular usando HTML/CSS
+        st.markdown("""
+            <div style="display: flex; align-items: center; justify-content: center; margin-top: 5px;">
+                <img src="app/static/logo_uis.webp" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #007A33;">
+            </div>
+        """, unsafe_allow_html=True)
+        # Como respaldo por si el path estático varía en Streamlit local, si no carga el html mostramos la imagen normal
+    else:
+        st.image("logo_uis.webp", width=45)
+
+with col_head2:
+    st.markdown("""
+        <div class="uis-header" style="margin-bottom: 0px;">
+            <div>
+                <h3 style="margin: 0; color: white; font-size: 18px;">🧠 Asistente IA de Optimización</h3>
+                <span style="font-size: 12px; color: #E2F6EC;">Ingeniería en Inteligencia Artificial • UIS</span>
+            </div>
+            <span style="background-color: #005E27; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; color: white;">En línea</span>
         </div>
-        <span style="background-color: #005E27; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; color: white;">En línea</span>
-    </div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 # --- INTERFAZ PRINCIPAL DE CONVERSACIÓN ---
 if st.session_state.problema_activo:
     prob = st.session_state.problema_activo
     
-    # Mensaje del usuario simulado en el chat
     with st.chat_message("user", avatar="👤"):
         st.markdown(f"**Enunciado / Contexto:** {prob['enunciado']}")
         st.markdown(f"**Función a optimizar:**")
         st.latex(f"f(x) = {prob['funcion_latex']}")
         
-    # Respuesta del Asistente IA
-    with st.chat_message("assistant", avatar="🤖"):
+    with st.chat_message("assistant", avatar="🧠"):
         st.markdown("¡Hola de nuevo! Analicemos este ejercicio paso a paso. Aquí tienes algunas pistas conceptuales para guiar tu razonamiento:")
         
         st.markdown(f"""
@@ -158,22 +194,18 @@ if st.session_state.problema_activo:
             st.rerun()
 
 else:
-    # Estado inicial de chat vacío / bienvenida
-    with st.chat_message("assistant", avatar="🤖"):
+    with st.chat_message("assistant", avatar="🧠"):
         st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función matemática o problema de optimización de una sola variable quieres que analicemos hoy?")
     
-    # Entrada de chat inferior nativa de Streamlit
     user_input = st.chat_input("Escribe tu función f(x) o el contexto del problema...")
     
     if user_input:
-        if "=" in user_input and "x" not in user_input.lower(): # Validación básica orientativa
+        if "x" not in user_input.lower():
             st.warning("⚠️ Recuerda ingresar la expresión en términos de la variable **x**.")
         else:
-            # Si el usuario escribe directamente la función en el chat
             funcion_str = user_input
             enunciado_user = "Análisis directo desde el chat."
             
-            # Limpieza y procesamiento idéntico al algoritmo original
             try:
                 funcion_saneada = limpiar_sintaxis_matematica(funcion_str)
                 f_expr = sp.sympify(funcion_saneada, locals={'x': x})
@@ -250,4 +282,4 @@ else:
                     st.rerun()
                     
             except Exception as e:
-                st.error(f"⚠️ No pude interpretar la sintaxis matemática. Detalle: {e}")
+                st.error(f"⚠️ No pude interpretar la sintaxis matemática. Asegúrate de ingresar una expresión válida en términos de x (ej: x*(12 - 2*x)^2). Detalle: {e}")
