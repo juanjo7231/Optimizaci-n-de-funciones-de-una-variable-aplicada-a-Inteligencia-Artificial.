@@ -10,7 +10,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILOS CSS CORREGIDOS (INPUT GRIS Y TEXTO BLANCO) ---
+# --- ESTILOS CSS CON BOTONES INTERACTIVOS Y MODERNOS ---
 st.markdown("""
     <style>
     .stApp {
@@ -61,19 +61,30 @@ st.markdown("""
         font-size: 14px;
         line-height: 1.5;
     }
+    
+    /* --- BOTONES MODERNOS E INTERACTIVOS --- */
     .stButton > button {
-        background-color: #007A33;
+        background: linear-gradient(135deg, #007A33 0%, #006328 100%);
         color: white;
-        border-radius: 8px;
+        border-radius: 10px;
         border: none;
-        font-weight: 500;
-        padding: 0.4rem 0.8rem;
-        transition: all 0.3s ease;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        box-shadow: 0 4px 6px rgba(0, 122, 51, 0.15);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
     }
     .stButton > button:hover {
-        background-color: #005E27;
+        background: linear-gradient(135deg, #00913C 0%, #007A33 100%);
+        box-shadow: 0 6px 12px rgba(0, 122, 51, 0.3);
+        transform: translateY(-2px);
         color: white;
     }
+    .stButton > button:active {
+        transform: translateY(0px);
+        box-shadow: 0 2px 4px rgba(0, 122, 51, 0.2);
+    }
+
     /* Estilo para redondear la imagen nativa del logo circular */
     .logo-circular img {
         border-radius: 50%;
@@ -275,7 +286,7 @@ else:
                         })
                         
                         pasos_narrativos.append({
-                            "texto": f"**Valor Óptimo**\n\nEvaluamos en la función original:",
+                            "texto": f"**Valor Óptimo**\n\Evaluamos en la función original:",
                             "latex": f"f({x_num:g}) = {sp.latex(f_expr.subs(x, pc))}",
                             "subtext": f"Resultado óptimo: **{val_y:g}**"
                         })
