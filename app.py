@@ -162,7 +162,7 @@ with st.sidebar:
     
     if st.session_state.historial_problemas:
         for idx, item in enumerate(reversed(st.session_state.historial_problemas)):
-            if st.button(f"💬 {item['titulo'][:22]}...", key=f"hist_{idx}", use_container_width=True):
+            if st.button(f"{item['titulo'][:25]}...", key=f"hist_{idx}", use_container_width=True):
                 st.session_state.problema_activo = item
                 st.session_state.mostrar_solucion = False
                 st.rerun()
@@ -245,7 +245,7 @@ if st.session_state.problema_activo:
 
 else:
     with st.chat_message("assistant", avatar="🧠"):
-        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función $f(x)$ en una sola variable quieres que analicemos hoy?")
+        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función en una sola variable quieres que analicemos hoy?")
     
     user_input = st.chat_input("Escribe tu función f(x)...")
     
@@ -320,7 +320,7 @@ else:
                         })
                     
                     nuevo_item = {
-                        "titulo": f"f(x): {funcion_str[:15]}",
+                        "titulo": f"{funcion_str[:20]}",
                         "funcion_latex": sp.latex(f_expr),
                         "pasos_narrativos": pasos_narrativos
                     }
