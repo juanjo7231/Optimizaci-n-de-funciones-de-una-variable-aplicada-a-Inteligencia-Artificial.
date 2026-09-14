@@ -190,71 +190,72 @@ else:
             try:
                 funcion_saneada = limpiar_sintaxis_matematica(funcion_str)
                 f_expr = sp.sympify(funcion_saneada)
-                f_prime = sp.diff(f_expr, x)
-                f_double_prime = sp.diff(f_prime, x)
-                puntos_criticos = sp.solve(f_prime, x)
                 
-                pasos_narrativos = []
-                
-                # Paso introductorio y primera derivada
-                pasos_narrativos.append({
-                    "texto": "La función ya se encuentra expresada en términos de una única variable ($x$). Para encontrar el punto crítico, calculamos la primera derivada de $f(x)$ respecto a $x$:",
-                    "latex": f"f'(x) = {sp.latex(f_prime)}"
-                })
-                
-                # Sección de Punto Crítico
-                pasos_narrativos.append({
-                    "texto": "**Punto Crítico**\n\nIgualamos la derivada a cero para hallar el valor de $x$:",
-                    "latex": f"{sp.latex(f_prime)} = 0"
-                })
-                
-                if puntos_criticos:
-                    pc = puntos_criticos[0] # Tomamos el primero para la demo detallada
-                    x_num = float(pc.evalf())
-                    val_seg = float(f_double_prime.subs(x, pc).evalf())
-                    val_y = float(f_expr.subs(x, pc).evalf())
-                    
-                    tipo_extremo = "máximo absoluto" if val_seg < 0 else "mínimo absoluto"
-                    signo_str = "< 0" if val_seg < 0 else "> 0"
-                    
-                    pasos_narrativos.append({
-                        "texto": f"Resolviendo la ecuación obtenemos:",
-                        "latex": f"x = {x_num:.2f}" if not pc.is_Integer else f"x = {int(x_num)}"
-                    })
-                    
-                    # Verificación de la segunda derivada
-                    pasos_narrativos.append({
-                        "texto": "**Verificación del Extremo**\n\nAplicamos el criterio de la segunda derivada para comprobar si se trata de un máximo o un mínimo:",
-                        "latex": f"f''(x) = {sp.latex(f_double_prime)}",
-                        "subtext": f"Dado que la segunda derivada es constante e igual a ${sp.latex(f_double_prime)}$ ($f''(x) {signo_str}$), la concavidad confirma que $x = {x_num:g}$ corresponde a un **{tipo_extremo}**."
-                    })
-                    
-                    # Cálculo del valor óptimo
-                    expr_sustitucion = str(f_expr)
-                    # Reemplazamos x por el valor para mostrar la sustitución bonita
-                    expr_sust_s = str(f_expr).replace('x', f'({x_num:g})')
-                    
-                    pasos_narrativos.append({
-                        "texto": f"**Cálculo del Valor Óptimo**\n\nSustituimos $x = {x_num:g}$ en la función original:",
-                        "latex": f"f({x_num:g}) = {sp.latex(f_expr.subs(x, pc))}" if hasattr(f_expr.subs(x, pc), 'evalf') else f"f({x_num:g}) = {val_y:g}",
-                        "subtext": f"Resultado final de la evaluación óptima: **{val_y:g}**"
-                    })
+                # Validar que contenga la variable x
+                if x not in f_expr.free_symbols:
+                    st.error("⚠️ La expresión ingresada no contiene la variable 'x'. Asegúrate de escribirla correctamente.")
                 else:
+                    f_prime = sp.diff(f_expr, x)
+                    f_double_prime = sp.diff(f_prime, x)
+                    puntos_criticos = sp.solve(f_prime, x)
+                    
+                    pasos_narrativos = []
+                    
+                    # Paso introductorio y primera derivada
                     pasos_narrativos.append({
-                        "texto": "No se encontraron puntos críticos reales para esta función."
+                        "texto": "La función ya se encuentra expresada en términos de una única variable ($x$). Para encontrar el punto crítico, calculamos la primera derivada de $f(x)$ respecto a $x$:",
+                        "latex": f"f'(x) = {sp.latex(f_prime)}"
                     })
-                
-                nuevo_item = {
-                    "titulo": enunciado_user[:25] if enunciado_user else f"Función: {funcion_str[:15]}",
-                    "enunciado": enunciado_user if enunciado_user else "Análisis de optimización directa.",
-                    "funcion_latex": sp.latex(f_expr),
-                    "pasos_narrativos": pasos_narrativos
-                }
-                st.session_state.historial_problemas.append(nuevo_item)
-                st.session_state.problema_activo = nuevo_item
-                st.session_state.mostrar_solucion = False
-                st.rerun()
-                
+                    
+                    # Sección de Punto Crítico
+                    pasos_narrativos.append({
+                        "texto": "**Punto Crítico**\n\nIgualamos la derivada a cero para hallar el valor de $x$:",
+                        "latex": f"{sp.latex(f_prime)} = 0"
+                    })
+                    
+                    if puntos_criticos:
+                        pc = puntos_criticos[0]
+                        x_num = float(pc.evalf())
+                        val_seg = float(f_double_prime.subs(x, pc).evalf())
+                        val_y = float(f_expr.subs(x, pc).evalf())
+                        
+                        tipo_extremo = "máximo absoluto" if val_seg < 0 else ("mínimo absoluto" if val_seg > 0 else "extremo")
+                        signo_str = "< 0" if val_seg < 0 else ("> 0" if val_seg > 0 else "= 0")
+                        
+                        pasos_narrativos.append({
+                            "texto": f"Resolviendo la ecuación obtenemos:",
+                            "latex": f"x = {x_num:.4f}" if not pc.is_Integer else f"x = {int(x_num)}"
+                        })
+                        
+                        # Verificación de la segunda derivada
+                        pasos_narrativos.append({
+                            "texto": "**Verificación del Extremo**\n\nAplicamos el criterio de la segunda derivada para comprobar si se trata de un máximo o un mínimo:",
+                            "latex": f"f''(x) = {sp.latex(f_double_prime)}",
+                            "subtext": f"Dado que la segunda derivada es igual a ${sp.latex(f_double_prime)}$ ($f''(x) {signo_str}$), el criterio confirma que $x = {x_num:g}$ corresponde a un **{tipo_extremo}**."
+                        })
+                        
+                        # Cálculo del valor óptimo con sustitución detallada
+                        pasos_narrativos.append({
+                            "texto": f"**Cálculo del Valor Óptimo**\n\nSustituimos $x = {x_num:g}$ en la función original:",
+                            "latex": f"f({x_num:g}) = {sp.latex(f_expr.subs(x, pc))}",
+                            "subtext": f"Resultado final de la evaluación óptima: **{val_y:g}**"
+                        })
+                    else:
+                        pasos_narrativos.append({
+                            "texto": "No se encontraron puntos críticos reales para esta función con los parámetros dados."
+                        })
+                    
+                    nuevo_item = {
+                        "titulo": enunciado_user[:25] if enunciado_user else f"Función: {funcion_str[:15]}",
+                        "enunciado": enunciado_user if enunciado_user else "Análisis de optimización directa.",
+                        "funcion_latex": sp.latex(f_expr),
+                        "pasos_narrativos": pasos_narrativos
+                    }
+                    st.session_state.historial_problemas.append(nuevo_item)
+                    st.session_state.problema_activo = nuevo_item
+                    st.session_state.mostrar_solucion = False
+                    st.rerun()
+                    
             except Exception as e:
                 st.error(f"⚠️ Error al interpretar la función. Revisa la sintaxis. Detalle: {e}")
 
