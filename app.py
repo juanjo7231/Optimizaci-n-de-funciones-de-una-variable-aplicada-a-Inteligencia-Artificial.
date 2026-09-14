@@ -39,7 +39,7 @@ st.markdown("""
         border: 1px solid #CBD5E1 !important;
         border-radius: 8px !important;
     }
-    .stTextInput label, .stTextArea label, .stSelectbox label {
+    .stTextInput label, .stTextArea label {
         color: #1E293B !important;
         font-weight: 500;
     }
@@ -55,36 +55,45 @@ st.markdown("""
         text-align: center;
         margin-bottom: 2rem;
     }
+    .tip-card {
+        background-color: #E2F6EC;
+        border-left: 5px solid #007A33;
+        padding: 1.2rem;
+        border-radius: 0 8px 8px 0;
+        margin-bottom: 1rem;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# Función para corregir automáticamente sintaxis común (ej: 2x3 -> 2*x**3, 15x2 -> 15*x**2)
+# Función segura para limpiar la sintaxis matemática sin dañar operadores
 def limpiar_sintaxis_matematica(expresion: str) -> str:
-    # Reemplazar potencias implícitas tipo x3 por x**3 o 2x3 por 2*x**3
     exp = expresion.replace("^", "**")
-    # Insertar ** antes de los exponentes numéricos si están pegados a letras (ej: x3 -> x**3)
+    # Convertir x3 a x**3 de forma segura
     exp = re.sub(r'([a-zA-Z])(\d+)', r'\1**\2', exp)
-    # Insertar * entre números y letras pegadas (ej: 2x -> 2*x, 15x**2 -> 15*x**2)
+    # Convertir 2x a 2*x
     exp = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', exp)
     return exp
 
-# Inicializar estados de la sesión
+# Inicializar estados de sesión
 if "historial_problemas" not in st.session_state:
     st.session_state.historial_problemas = []
 if "problema_activo" not in st.session_state:
     st.session_state.problema_activo = None
+if "mostrar_solucion" not in st.session_state:
+    st.session_state.mostrar_solucion = False
 
 # --- BARRA LATERAL ---
 with st.sidebar:
     try:
         st.image("logo_uis.webp", use_container_width=True)
     except:
-        st.info("💡 Sube un archivo 'logo_uis.webp' al directorio para ver el escudo oficial.")
+        st.info("💡 Sube tu 'logo_uis.webp' al directorio para ver el escudo.")
         
     st.markdown("### 💬 Conversaciones")
     
     if st.button("➕ Nuevo Problema", use_container_width=True):
         st.session_state.problema_activo = None
+        st.session_state.mostrar_solucion = False
         st.rerun()
         
     st.markdown("---")
@@ -94,15 +103,15 @@ with st.sidebar:
         for idx, item in enumerate(reversed(st.session_state.historial_problemas)):
             if st.button(f"📌 {item['titulo'][:22]}...", key=f"hist_{idx}", use_container_width=True):
                 st.session_state.problema_activo = item
+                st.session_state.mostrar_solucion = False
                 st.rerun()
     else:
-        st.markdown("<p style='font-size: 13px; color: #94A3B8;'>No hay problemas analizados aún.</p>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size: 13px; color: #94A38B;'>No hay problemas analizados aún.</p>", unsafe_allow_html=True)
         
     st.markdown("---")
     st.markdown("##### 🏛️ Universidad Industrial de Santander")
     st.caption("Sede Barrancabermeja | Ing. Inteligencia Artificial")
 
-# Definir la variable simbólica principal
 x = sp.Symbol('x', real=True)
 
 # --- CUERPO PRINCIPAL ---
@@ -120,98 +129,115 @@ if st.session_state.problema_activo:
     st.info(f"**Enunciado:** {prob['enunciado']}")
     
     st.markdown("---")
-    st.markdown("### 🔍 Memoria de Cálculo y Resultados:")
-    st.latex(f"f(x) = {prob['f_latex']}")
-    st.latex(f"f'(x) = {prob['f_prime_latex']}")
-    st.latex(f"f''(x) = {prob['f_double_latex']}")
+    st.markdown("### 🧠 Pistas y Tips de Resolución (Paso 1):")
+    st.markdown("""
+        <div class="tip-card">
+            <p><b>💡 Tip 1: Entiende qué buscas optimizar.</b><br>
+            La función objetivo ya está dada. Recuerda que para hallar máximos o mínimos locales, el primer paso fundamental es encontrar dónde la pendiente de la curva se vuelve cero.</p>
+            
+            <p><b>💡 Tip 2: Aplica la regla de la potencia para derivar.</b><br>
+            Piensa en cómo derivar cada término por separado: baja el exponente a multiplicar y réstale 1. Por ejemplo, la derivada de un término cúbico te quedará con grado 2.</p>
+            
+            <p><b>💡 Tip 3: Iguala la primera derivada a cero.</b><br>
+            Los puntos críticos salen de resolver $f'(x) = 0$. Intenta factorizar o simplificar la ecuación cuadrática resultante antes de buscar las raíces.</p>
+            
+            <p><b>💡 Tip 4: Usa el criterio de la segunda derivada.</b><br>
+            Una vez hallados los puntos $x$, evalúalos en $f''(x)$. Si el resultado es negativo, es una cima (máximo); si es positivo, es un valle (mínimo).</p>
+        </div>
+    """, unsafe_allow_html=True)
     
-    st.markdown(prob['resultado_texto'], unsafe_allow_html=True)
-    
-    if st.button("⬅️ Volver al chat principal"):
+    # Botón para revelar el paso a paso completo
+    if not st.session_state.mostrar_solucion:
+        if st.button("🔍 Ver Solución Paso a Paso Completa"):
+            st.session_state.mostrar_solucion = True
+            st.rerun()
+    else:
+        st.markdown("---")
+        st.markdown("### 📊 Solución Paso a Paso Completa:")
+        
+        st.write("**1. Función Objetivo:**")
+        st.latex(f"f(x) = {prob['f_latex']}")
+        
+        st.write("**2. Primera Derivada ($f'(x)$):**")
+        st.latex(f"f'(x) = {prob['f_prime_latex']}")
+        
+        st.write("**3. Segunda Derivada ($f''(x)$):**")
+        st.latex(f"f''(x) = {prob['f_double_latex']}")
+        
+        st.write("**4. Puntos Críticos y Criterio de la Segunda Derivada:**")
+        st.markdown(prob['resultado_texto'], unsafe_allow_html=True)
+        
+        if st.button("Ocultar solución"):
+            st.session_state.mostrar_solucion = False
+            st.rerun()
+            
+    if st.button("⬅️ Volver al inicio"):
         st.session_state.problema_activo = None
+        st.session_state.mostrar_solucion = False
         st.rerun()
 
 else:
     st.markdown("""
         <div class="chat-welcome-card">
             <h2>¿Qué problema vamos a resolver hoy?</h2>
-            <p style="color: #64748B; font-size: 15px;">Ingresa tu función (ej: <code>2x3 - 15x2 + 36x</code>). La IA se encarga de adaptarla, derivar, hallar puntos críticos y darte el resultado paso a paso.</p>
+            <p style="color: #64748B; font-size: 15px;">Ingresa tu función (ej: <code>2x3 - 15x2 + 36x</code>). Primero te daremos tips de razonamiento y pistas para que pienses el ejercicio, y luego podrás revelar la solución paso a paso.</p>
         </div>
     """, unsafe_allow_html=True)
 
     st.markdown("#### ✍️ Planta tu caso de estudio:")
-    enunciado_user = st.text_area("Enunciado o descripción del problema:", placeholder="Ej: Maximizar la función de costos...", height=100)
+    enunciado_user = st.text_area("Enunciado o descripción del problema:", placeholder="Ej: Maximizar una caja sin tapa...", height=100)
     funcion_str = st.text_input("Función objetivo $f(x)$:", placeholder="Ej: 2x3 - 15x2 + 36*x")
     
     col_btn1, col_btn2 = st.columns([1, 4])
     with col_btn1:
-        ejecutar = st.button("⚡ Analizar", use_container_width=True)
+        analizar = st.button("⚡ Analizar", use_container_width=True)
         
-    if ejecutar:
+    if analizar:
         if not funcion_str.strip():
             st.warning("⚠️ Por favor ingresa una función matemática válida.")
         else:
             try:
-                # Limpiar y parsear automáticamente la sintaxis natural del usuario
                 funcion_saneada = limpiar_sintaxis_matematica(funcion_str)
                 f_expr = sp.sympify(funcion_saneada)
                 f_prime = sp.diff(f_expr, x)
                 f_double_prime = sp.diff(f_prime, x)
                 puntos_criticos = sp.solve(f_prime, x)
                 
-                st.markdown("---")
-                st.markdown("### 📊 Resultados del Análisis:")
-                
-                st.write("**1. Función Objetivo:**")
-                st.latex(f"f(x) = {sp.latex(f_expr)}")
-                
-                st.write("**2. Primera Derivada ($f'(x)$):**")
-                st.latex(f"f'(x) = {sp.latex(f_prime)}")
-                
-                st.write("**3. Segunda Derivada ($f''(x)$):**")
-                st.latex(f"f''(x) = {sp.latex(f_double_prime)}")
-                
                 res_texto_guardado = ""
                 if puntos_criticos:
-                    st.write("**4. Puntos Críticos y Criterio de la Segunda Derivada:**")
                     for pc in puntos_criticos:
-                        st.latex(f"x = {sp.latex(pc)}")
                         try:
                             val_seg = float(f_double_prime.subs(x, pc).evalf())
                             val_y = float(f_expr.subs(x, pc).evalf())
                             x_num = float(pc.evalf())
                             
                             if val_seg < 0:
-                                msg = f"✅ **MÁXIMO LOCAL** hallado en $x \\approx {x_num:.4f}$, con un valor de $f(x) = {val_y:.4f}$ (Segunda derivada negativa: {val_seg:.2f} < 0)."
-                                st.success(msg)
-                                res_texto_guardado += f"<br>{msg}"
+                                msg = f"• Para $x = {x_num:.4f}$: evaluamos en $f''(x)$ y obtenemos ${val_seg:.2f} < 0$. Por lo tanto, hay un **MÁXIMO LOCAL**, con un valor óptimo de $f(x) = {val_y:.4f}$.<br>"
+                                res_texto_guardado += msg
                             elif val_seg > 0:
-                                msg = f"✅ **MÍNIMO LOCAL** hallado en $x \\approx {x_num:.4f}$, con un valor de $f(x) = {val_y:.4f}$ (Segunda derivada positiva: {val_seg:.2f} > 0)."
-                                st.success(msg)
-                                res_texto_guardado += f"<br>{msg}"
+                                msg = f"• Para $x = {x_num:.4f}$: evaluamos en $f''(x)$ y obtenemos ${val_seg:.2f} > 0$. Por lo tanto, hay un **MÍNIMO LOCAL**, con un valor óptimo de $f(x) = {val_y:.4f}$.<br>"
+                                res_texto_guardado += msg
                             else:
-                                msg = f"⚠️ En $x = {pc}$, la segunda derivada es cero; el criterio no es concluyente."
-                                st.warning(msg)
-                                res_texto_guardado += f"<br>{msg}"
+                                msg = f"• En $x = {pc}$, la segunda derivada es cero; no es concluyente.<br>"
+                                res_texto_guardado += msg
                         except:
-                            msg = f"Punto crítico exacto en $x = {pc}$."
-                            st.info(msg)
-                            res_texto_guardado += f"<br>{msg}"
+                            msg = f"• Punto crítico en $x = {pc}$.<br>"
+                            res_texto_guardado += msg
                 else:
-                    st.warning("No se encontraron puntos críticos reales.")
                     res_texto_guardado = "No se encontraron puntos críticos reales."
                     
-                # Guardar en el historial de sesión
+                # Guardar en sesión
                 nuevo_item = {
                     "titulo": enunciado_user[:30] if enunciado_user else f"Función: {funcion_str[:20]}",
                     "enunciado": enunciado_user if enunciado_user else "Sin enunciado redactado.",
                     "f_latex": sp.latex(f_expr),
-                    "f_prime_laser": sp.latex(f_prime),
                     "f_prime_latex": sp.latex(f_prime),
                     "f_double_latex": sp.latex(f_double_prime),
                     "resultado_texto": res_texto_guardado
                 }
-                st.session_state.historial_problemas.append(nuevo_item)
+                st.session_state.problema_activo = nuevo_item
+                st.session_state.mostrar_solucion = False
+                st.rerun()
                 
             except Exception as e:
                 st.error(f"⚠️ Error al interpretar la función. Revisa la sintaxis. Detalle: {e}")
