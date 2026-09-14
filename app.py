@@ -247,7 +247,7 @@ else:
     with st.chat_message("assistant", avatar="🧠"):
         st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función en una sola variable quieres que analicemos hoy?")
     
-    user_input = st.chat_input("Escribe tu función f(x)...")
+    user_input = st.chat_input("Escribe tu función en una sola variable a resolver por ejemplo...")
     
     if user_input:
         if "x" not in user_input.lower():
