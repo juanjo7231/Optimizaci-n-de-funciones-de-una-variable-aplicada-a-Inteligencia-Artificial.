@@ -10,7 +10,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILOS CSS CORREGIDOS (TEXTO VISIBLE Y ESTILO CHAT) ---
+# --- ESTILOS CSS CORREGIDOS ---
 st.markdown("""
     <style>
     .stApp {
@@ -61,6 +61,14 @@ st.markdown("""
         background-color: #005E27;
         color: white;
     }
+    /* Estilo para redondear la imagen nativa del logo circular */
+    .logo-circular img {
+        border-radius: 50%;
+        border: 2px solid #007A33;
+        object-fit: cover;
+        width: 48px;
+        height: 48px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -86,16 +94,12 @@ if "problema_activo" not in st.session_state:
 if "mostrar_solucion" not in st.session_state:
     st.session_state.mostrar_solucion = False
 
-# --- BARRA LATERAL ---
+# --- BARRA LATERAL (Usa logo_uis.webp) ---
 with st.sidebar:
-    nombre_logo_sidebar = "logo-universidad-industrial-de-santander.webp"
-    if os.path.exists(nombre_logo_sidebar):
-        st.image(nombre_logo_sidebar, use_container_width=True)
+    if os.path.exists("logo_uis.webp"):
+        st.image("logo_uis.webp", use_container_width=True)
     else:
-        try:
-            st.image("logo_uis.webp", use_container_width=True)
-        except:
-            st.info("💡 Sube tu 'logo-universidad-industrial-de-santander.webp' al directorio.")
+        st.info("💡 Sube tu 'logo_uis.webp' al directorio.")
         
     st.markdown("### 🤖 Sesiones de Chat")
     if st.button("➕ Nueva Conversación", use_container_width=True):
@@ -120,21 +124,16 @@ with st.sidebar:
 
 x = sp.Symbol('x', real=True)
 
-# --- ENCABEZADO CON LOGO CIRCULAR Y TÍTULO ---
+# --- ENCABEZADO CON LOGO CIRCULAR (logo-universidad-industrial-de-santander.webp) ---
 col_head1, col_head2 = st.columns([0.12, 0.88])
 with col_head1:
-    nombre_logo = "logo-universidad-industrial-de-santander.webp"
-    if os.path.exists(nombre_logo):
-        st.markdown(f"""
-            <div style="display: flex; align-items: center; justify-content: center; margin-top: 5px;">
-                <img src="app/static/{nombre_logo}" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid #007A33;">
-            </div>
-        """, unsafe_allow_html=True)
+    logo_circular = "logo-universidad-industrial-de-santander.webp"
+    if os.path.exists(logo_circular):
+        st.markdown('<div class="logo-circular">', unsafe_allow_html=True)
+        st.image(logo_circular)
+        st.markdown('</div>', unsafe_allow_html=True)
     else:
-        try:
-            st.image(nombre_logo, width=45)
-        except:
-            st.info("💡 Sube tu logo.")
+        st.warning("⚠️ Falta 'logo-universidad-industrial-de-santander.webp'")
 
 with col_head2:
     st.markdown("""
