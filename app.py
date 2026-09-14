@@ -10,7 +10,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILOS CSS CON BOTONES INTERACTIVOS Y MODERNOS ---
+# --- ESTILOS CSS REFORZADOS PARA BOTONES Y TEXTO ---
 st.markdown("""
     <style>
     .stApp {
@@ -34,7 +34,6 @@ st.markdown("""
         background-color: #1E293B !important;
         border-radius: 8px !important;
     }
-    /* Color del texto de placeholder (guía) dentro del input */
     .stChatInput textarea::placeholder {
         color: #94A3B8 !important;
         opacity: 1 !important;
@@ -51,6 +50,7 @@ st.markdown("""
         margin-bottom: 20px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.04);
     }
+    
     .tip-box-chat {
         background-color: #E2F6EC;
         border-left: 4px solid #007A33;
@@ -62,27 +62,35 @@ st.markdown("""
         line-height: 1.5;
     }
     
-    /* --- BOTONES MODERNOS E INTERACTIVOS --- */
+    /* --- BOTONES MODERNOS, INTERACTIVOS Y CON TEXTO BLANCO FORZADO --- */
     .stButton > button {
-        background: linear-gradient(135deg, #007A33 0%, #006328 100%);
-        color: white;
-        border-radius: 10px;
-        border: none;
-        font-weight: 600;
-        padding: 0.5rem 1rem;
-        box-shadow: 0 4px 6px rgba(0, 122, 51, 0.15);
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        width: 100%;
+        background: linear-gradient(135deg, #008738 0%, #005E27 100%) !important;
+        color: #FFFFFF !important;
+        border-radius: 10px !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        font-weight: 600 !important;
+        padding: 0.6rem 1.2rem !important;
+        box-shadow: 0 4px 10px rgba(0, 122, 51, 0.25) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        width: 100% !important;
+        letter-spacing: 0.3px;
     }
+    
+    /* Forzar el color blanco en todos los textos/iconos internos del botón */
+    .stButton > button p, .stButton > button span, .stButton > button div {
+        color: #FFFFFF !important;
+    }
+
     .stButton > button:hover {
-        background: linear-gradient(135deg, #00913C 0%, #007A33 100%);
-        box-shadow: 0 6px 12px rgba(0, 122, 51, 0.3);
-        transform: translateY(-2px);
-        color: white;
+        background: linear-gradient(135deg, #00A642 0%, #007A33 100%) !important;
+        box-shadow: 0 6px 16px rgba(0, 122, 51, 0.4) !important;
+        transform: translateY(-2px) !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
     }
+    
     .stButton > button:active {
-        transform: translateY(0px);
-        box-shadow: 0 2px 4px rgba(0, 122, 51, 0.2);
+        transform: translateY(0px) !important;
+        box-shadow: c0 2px 6px rgba(0, 122, 51, 0.3) !important;
     }
 
     /* Estilo para redondear la imagen nativa del logo circular */
@@ -92,6 +100,24 @@ st.markdown("""
         object-fit: cover;
         width: 48px;
         height: 48px;
+    }
+
+    /* Adaptaciones para celulares */
+    @media (max-width: 768px) {
+        .uis-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 12px 14px;
+        }
+        .uis-header h3 {
+            font-size: 16px !important;
+        }
+        .block-container {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            padding-top: 2rem !important;
+        }
     }
     </style>
 """, unsafe_allow_html=True)
@@ -118,7 +144,7 @@ if "problema_activo" not in st.session_state:
 if "mostrar_solucion" not in st.session_state:
     st.session_state.mostrar_solucion = False
 
-# --- BARRA LATERAL (Usa logo_uis.webp) ---
+# --- BARRA LATERAL ---
 with st.sidebar:
     if os.path.exists("logo_uis.webp"):
         st.image("logo_uis.webp", use_container_width=True)
@@ -148,7 +174,7 @@ with st.sidebar:
 
 x = sp.Symbol('x', real=True)
 
-# --- ENCABEZADO CON LOGO CIRCULAR (logo-universidad-industrial-de-santander.webp) ---
+# --- ENCABEZADO ---
 col_head1, col_head2 = st.columns([0.12, 0.88])
 with col_head1:
     logo_circular = "logo-universidad-industrial-de-santander.webp"
@@ -186,10 +212,10 @@ if st.session_state.problema_activo:
         
         st.markdown(f"""
             <div class="tip-box-chat">
-                <p style="margin-bottom: 8px;"><b>💡 Pista 1: Visualiza la forma geométrica.</b><br>Piensa en qué tipo de curva representa tu función y hacia dónde abre. Eso te orienta sobre el tipo de extremo que buscas.</p>
-                <p style="margin-bottom: 8px;"><b>💡 Pista 2: El papel de la pendiente.</b><br>Recuerda qué representa gráficamente la primera derivada en la cumbre o el valle de una función.</p>
-                <p style="margin-bottom: 8px;"><b>💡 Pista 3: Planteamiento del punto crítico.</b><br>Deriva la función e iguala a cero para despejar los valores candidatos de <i>x</i>.</p>
-                <p style="margin-bottom: 0px;"><b>💡 Pista 4: La prueba de la curvatura.</b><br>Usa la segunda derivada para confirmar si el punto hallado es un máximo o un mínimo.</p>
+                <p style="margin-bottom: 8px;"><b>💡 Pista 1: Visualiza la forma geométrica.</b><br>Piensa en qué tipo de curva representa tu función y hacia dónde abre.</p>
+                <p style="margin-bottom: 8px;"><b>💡 Pista 2: El papel de la pendiente.</b><br>Recuerda qué representa gráficamente la primera derivada en la cumbre o el valle.</p>
+                <p style="margin-bottom: 8px;"><b>💡 Pista 3: Planteamiento del punto crítico.</b><br>Deriva la función e iguala a cero para despejar los valores de <i>x</i>.</p>
+                <p style="margin-bottom: 0px;"><b>💡 Pista 4: La prueba de la curvatura.</b><br>Usa la segunda derivada para confirmar si es un máximo o un mínimo.</p>
             </div>
         """, unsafe_allow_html=True)
         
@@ -220,7 +246,7 @@ if st.session_state.problema_activo:
 
 else:
     with st.chat_message("assistant", avatar="🧠"):
-        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función matemática o problema de optimización de una sola variable quieres que analicemos hoy?")
+        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función matemática o problema de optimización quieres que analicemos hoy?")
     
     user_input = st.chat_input("Escribe tu función f(x) o el contexto del problema...")
     
@@ -286,7 +312,7 @@ else:
                         })
                         
                         pasos_narrativos.append({
-                            "texto": f"**Valor Óptimo**\n\Evaluamos en la función original:",
+                            "texto": f"**Valor Óptimo**\n\nEvaluamos en la función original:",
                             "latex": f"f({x_num:g}) = {sp.latex(f_expr.subs(x, pc))}",
                             "subtext": f"Resultado óptimo: **{val_y:g}**"
                         })
@@ -307,4 +333,4 @@ else:
                     st.rerun()
                     
             except Exception as e:
-                st.error(f"⚠️ No pude interpretar la sintaxis matemática. Asegúrate de ingresar una expresión válida en términos de x (ej: x*(12 - 2*x)^2). Detalle: {e}")
+                st.error(f"⚠️ No pude interpretar la sintaxis matemática. Asegúrate de ingresar una expresión válida en términos de x. Detalle: {e}")
