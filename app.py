@@ -10,15 +10,15 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILOS CSS CON ANIMACIÓN DE PARPADEO VERDE ---
+# --- ESTILOS CSS CON ANIMACIÓN DE PARPADEO VERDE EN LA ENTRADA ---
 st.markdown("""
     <style>
-    @keyframes pulsoVerde {
+    @keyframes pulsoEntradaVerde {
         0% {
-            box-shadow: 0 0 0 0 rgba(0, 122, 51, 0.4);
+            box-shadow: 0 0 0 0 rgba(0, 122, 51, 0.7);
         }
         70% {
-            box-shadow: 0 0 0 12px rgba(0, 122, 51, 0);
+            box-shadow: 0 0 0 14px rgba(0, 122, 51, 0);
         }
         100% {
             box-shadow: 0 0 0 0 rgba(0, 122, 51, 0);
@@ -43,7 +43,12 @@ st.markdown("""
         color: #1E293B !important;
     }
     
-    /* Configuración para que el cuadro de texto sea gris y lo que escribas sea blanco */
+    /* Configuración del cuadro de texto inferior con la animación de parpadeo verde al entrar */
+    .stChatInput {
+        animation: pulsoEntradaVerde 2.5s infinite;
+        border-radius: 10px;
+    }
+
     .stChatInput textarea, .stChatInput input {
         color: #FFFFFF !important;
         background-color: #1E293B !important;
@@ -68,7 +73,6 @@ st.markdown("""
         justify-content: space-between;
         margin-bottom: 20px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-        animation: pulsoVerde 2.5s infinite;
     }
     
     .tip-box-chat {
@@ -150,8 +154,7 @@ def limpiar_sintaxis_matematica(expresion: str) -> str:
     exp = re.sub(r'^[a-zA-Z_][a-zA-Z0-9_]*\s*\([xX]\)\s*=', '', exp)
     
     exp = exp.replace("^", "**")
-    exp = re.sub(r'([a-zA-Z0-9\)])\(', r'\1*(', exp)
-    exp = re.sub(r'\)([a-zA-Z0-9])', r')*\1', exp)
+    exp = re.sub(r'([a-zA-Z0-9\)])\(', r'\1*(', exp)     exp = re.sub(r'\)([a-zA-Z0-9])', r')*\1', exp)
     exp = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', exp)
     exp = re.sub(r'([a-zA-Z])(\d+)', r'\1**\2', exp)
     return exp.strip()
@@ -208,7 +211,7 @@ with col_head2:
     st.markdown("""
         <div class="uis-header" style="margin-bottom: 0px;">
             <div>
-                <h3 style="margin: 0; color: white; font-size: 18px;">🧠 Asistente IA de Optimización</h3>
+                <h3 style="margin: 0; color: white; font-size: 18px;">🧠 Asistente IA de Optimización en una sola variable</h3>
                 <span style="font-size: 12px; color: #E2F6EC;">Ingeniería en Inteligencia Artificial • UIS</span>
             </div>
             <span style="background-color: #005E27; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; color: white;">En línea</span>
@@ -264,7 +267,7 @@ if st.session_state.problema_activo:
 
 else:
     with st.chat_message("assistant", avatar="🧠"):
-        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función en una sola variable quieres que analizemos hoy?")
+        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función $f(x)$ en una sola variable quieres que analicemos hoy?")
     
     user_input = st.chat_input("Escribe tu función f(x)...")
     
@@ -310,43 +313,4 @@ else:
                         val_seg = float(f_double_prime.subs(x, pc).evalf())
                         val_y = float(f_expr.subs(x, pc).evalf())
                         
-                        tipo_extremo = "máximo absoluto" if val_seg < 0 else ("mínimo absoluto" if val_seg > 0 else "extremo")
-                        signo_str = "< 0" if val_seg < 0 else ("> 0" if val_seg > 0 else "= 0")
-                        
-                        pasos_narrativos.append({
-                            "texto": "",
-                            "latex": f"{sp.latex(f_prime)} = 0 \\implies x = {x_num:g}" if pc.is_Integer else f"{sp.latex(f_prime)} = 0 \\implies x = {x_num:.4f}"
-                        })
-                        
-                        pasos_narrativos.append({
-                            "texto": f"El punto crítico se localiza en $x = {x_num:g}$."
-                        })
-                        
-                        pasos_narrativos.append({
-                            "texto": "**Verificación del Extremo**\n\nAplicamos el criterio de la segunda derivada:",
-                            "latex": f"f''(x) = {sp.latex(f_double_prime)}",
-                            "subtext": f"Como $f''(x) {signo_str}$, confirmamos que se trata de un **{tipo_extremo}**."
-                        })
-                        
-                        pasos_narrativos.append({
-                            "texto": f"**Valor Óptimo**\n\nEvaluamos en la función original:",
-                            "latex": f"f({x_num:g}) = {sp.latex(f_expr.subs(x, pc))}",
-                            "subtext": f"Resultado óptimo: **{val_y:g}**"
-                        })
-                    else:
-                        pasos_narrativos.append({
-                            "texto": "No se hallaron puntos críticos reales con los parámetros ingresados."
-                        })
-                    
-                    nuevo_item = {
-                        "titulo": f"f(x): {funcion_str[:20]}",
-                        "funcion_latex": sp.latex(f_expr),
-                        "pasos_narrativos": pasos_narrativos
-                    }
-                    st.session_state.historial_problemas.append(nuevo_item)
-                    st.session_state.problema_activo = nuevo_item
-                    st.session_state.mostrar_solucion = False
-                    st.rerun()
-                    
-            except Exception as e:
-                st.error(f"⚠️ No pude interpretar la sintaxis matemática. Asegúrate de ingresar una expresión válida en términos de x. Detalle: {e}")
+                        tipo_
