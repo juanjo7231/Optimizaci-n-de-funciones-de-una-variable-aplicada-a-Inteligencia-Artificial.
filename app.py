@@ -10,13 +10,32 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILOS CSS REFORZADOS PARA BOTONES Y TEXTO ---
+# --- ESTILOS CSS CON ANIMACIÓN DE PARPADEO VERDE ---
 st.markdown("""
     <style>
+    @keyframes pulsoVerde {
+        0% {
+            box-shadow: 0 0 0 0 rgba(0, 122, 51, 0.4);
+        }
+        70% {
+            box-shadow: 0 0 0 12px rgba(0, 122, 51, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(0, 122, 51, 0);
+        }
+    }
+
+    @keyframes fadeInApp {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
     .stApp {
         background-color: #F8FAFC;
         color: #1E293B !important;
+        animation: fadeInApp 0.6s ease-out;
     }
+    
     .stChatMessage {
         color: #1E293B !important;
     }
@@ -49,6 +68,7 @@ st.markdown("""
         justify-content: space-between;
         margin-bottom: 20px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        animation: pulsoVerde 2.5s infinite;
     }
     
     .tip-box-chat {
@@ -76,7 +96,6 @@ st.markdown("""
         letter-spacing: 0.3px;
     }
     
-    /* Forzar el color blanco en todos los textos/iconos internos del botón */
     .stButton > button p, .stButton > button span, .stButton > button div {
         color: #FFFFFF !important;
     }
@@ -189,7 +208,7 @@ with col_head2:
     st.markdown("""
         <div class="uis-header" style="margin-bottom: 0px;">
             <div>
-                <h3 style="margin: 0; color: white; font-size: 18px;">🧠 Asistente IA de Optimización en una sola variable</h3>
+                <h3 style="margin: 0; color: white; font-size: 18px;">🧠 Asistente IA de Optimización</h3>
                 <span style="font-size: 12px; color: #E2F6EC;">Ingeniería en Inteligencia Artificial • UIS</span>
             </div>
             <span style="background-color: #005E27; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; color: white;">En línea</span>
@@ -247,7 +266,7 @@ else:
     with st.chat_message("assistant", avatar="🧠"):
         st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función en una sola variable quieres que analizemos hoy?")
     
-    user_input = st.chat_input("Coloca tu función en una sola variable...")
+    user_input = st.chat_input("Escribe tu función f(x)...")
     
     if user_input:
         if "x" not in user_input.lower():
@@ -320,7 +339,7 @@ else:
                         })
                     
                     nuevo_item = {
-                        "titulo": f"{funcion_str[:20]}",
+                        "titulo": f"f(x): {funcion_str[:20]}",
                         "funcion_latex": sp.latex(f_expr),
                         "pasos_narrativos": pasos_narrativos
                     }
