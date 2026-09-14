@@ -4,45 +4,37 @@ import re
 
 # Configuración de la página
 st.set_page_config(
-    page_title="Asistente UIS - Optimización de Una Variable",
-    page_icon="📐",
+    page_title="Asistente UIS - IA de Optimización",
+    page_icon="🤖",
     layout="centered"
 )
 
-# --- ESTILOS CSS LIMPIOS ---
+# --- ESTILOS CSS ESTILO CHAT / IA ---
 st.markdown("""
     <style>
     .stApp {
-        background-color: #F4F7F5;
+        background-color: #F8FAFC;
         color: #1E293B;
-    }
-    .main-container {
-        background-color: #FFFFFF;
-        border-radius: 12px;
-        border: 1px solid #E2E8F0;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-        overflow: hidden;
-        margin-bottom: 20px;
     }
     .uis-header {
         background-color: #007A33;
         color: white;
-        padding: 22px 25px;
+        padding: 16px 20px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
     }
-    .uis-body {
-        padding: 25px;
-    }
-    .tip-box-clean {
+    .tip-box-chat {
         background-color: #E2F6EC;
-        border-left: 5px solid #007A33;
-        padding: 18px 20px;
+        border-left: 4px solid #007A33;
+        padding: 14px 16px;
         border-radius: 0 8px 8px 0;
-        margin: 15px 0;
+        margin: 10px 0;
         color: #1E293B;
-        font-size: 14.5px;
+        font-size: 14px;
         line-height: 1.5;
     }
     .stButton > button {
@@ -51,22 +43,12 @@ st.markdown("""
         border-radius: 8px;
         border: none;
         font-weight: 500;
-        padding: 0.5rem 1rem;
+        padding: 0.4rem 0.8rem;
         transition: all 0.3s ease;
     }
     .stButton > button:hover {
         background-color: #005E27;
         color: white;
-    }
-    .stTextInput input, .stTextArea textarea {
-        background-color: #FFFFFF !important;
-        color: #1E293B !important;
-        border: 1px solid #CBD5E1 !important;
-        border-radius: 8px !important;
-    }
-    .stTextInput label, .stTextArea label {
-        color: #1E293B !important;
-        font-weight: 500;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -93,129 +75,124 @@ with st.sidebar:
     except:
         st.info("💡 Sube tu 'logo_uis.webp' al directorio para ver el escudo.")
         
-    st.markdown("### 📐 Casos de Optimización")
-    if st.button("➕ Nuevo Problema", use_container_width=True):
+    st.markdown("### 🤖 Sesiones de Chat")
+    if st.button("➕ Nueva Conversación", use_container_width=True):
         st.session_state.problema_activo = None
         st.session_state.mostrar_solucion = False
         st.rerun()
         
     st.markdown("---")
-    st.markdown("<p style='font-size: 12px; color: #64748B; font-weight: 600;'>HISTORIAL RECIENTE</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 12px; color: #64748B; font-weight: 600;'>HISTORIAL</p>", unsafe_allow_html=True)
     
     if st.session_state.historial_problemas:
         for idx, item in enumerate(reversed(st.session_state.historial_problemas)):
-            if st.button(f"📌 {item['titulo'][:22]}...", key=f"hist_{idx}", use_container_width=True):
+            if st.button(f"💬 {item['titulo'][:22]}...", key=f"hist_{idx}", use_container_width=True):
                 st.session_state.problema_activo = item
                 st.session_state.mostrar_solucion = False
                 st.rerun()
     else:
-        st.markdown("<p style='font-size: 13px; color: #94A3B8;'>Sin registros previos.</p>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size: 13px; color: #94A3B8;'>Sin chats previos.</p>", unsafe_allow_html=True)
         
     st.markdown("---")
     st.caption("Universidad Industrial de Santander\nSede Barrancabermeja")
 
 x = sp.Symbol('x', real=True)
 
-# --- ESTRUCTURA MAESTRA UNIFICADA ---
-st.markdown('<div class="main-container">', unsafe_allow_html=True)
-
+# --- ENCABEZADO TIPO CHAT IA ---
 st.markdown("""
     <div class="uis-header">
         <div>
-            <h3 style="margin: 0; color: white; font-size: 20px;">Asistente de Optimización - UIS</h3>
-            <span style="font-size: 13px; color: #E2F6EC;">Ingeniería en Inteligencia Artificial</span>
+            <h3 style="margin: 0; color: white; font-size: 18px;">🤖 Asistente IA de Optimización</h3>
+            <span style="font-size: 12px; color: #E2F6EC;">Ingeniería en Inteligencia Artificial • UIS</span>
         </div>
-        <span style="background-color: #005E27; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; color: white;">Académico</span>
+        <span style="background-color: #005E27; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; color: white;">En línea</span>
     </div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="uis-body">', unsafe_allow_html=True)
-
+# --- INTERFAZ PRINCIPAL DE CONVERSACIÓN ---
 if st.session_state.problema_activo:
     prob = st.session_state.problema_activo
     
-    st.markdown("#### 📄 Análisis del Problema")
-    st.markdown(f"**Enunciado:** {prob['enunciado']}")
-    st.markdown("**Función Objetivo:**")
-    st.latex(f"f(x) = {prob['funcion_latex']}")
-    
-    st.markdown("### 🧠 Pistas y Tips para Pensar el Ejercicio:")
-    
-    # Pistas conceptuales y limitadas (sin dar la respuesta directa)
-    st.markdown("""
-        <div class="tip-box-clean">
-            <p style="margin-bottom: 12px;"><b>💡 Pista 1: Visualiza la forma geométrica.</b><br>Piensa en qué tipo de curva representa tu función (por ejemplo, ¿su gráfica abre hacia arriba o hacia abajo?). Eso te da una pista intuitiva de si vas a encontrar un valor máximo o mínimo.</p>
-            <p style="margin-bottom: 12px;"><b>💡 Pista 2: El papel de la pendiente.</b><br>Recuerda qué representa gráficamente la primera derivada en el punto más alto o más bajo de una colina.</p>
-            <p style="margin-bottom: 12px;"><b>💡 Pista 3: Planteamiento del punto crítico.</b><br>Intenta calcular la derivada de tu función por tu cuenta e igualarla a cero. ¿Qué valor despejas para <i>x</i>?</p>
-            <p style="margin-bottom: 0px;"><b>💡 Pista 4: La prueba de la curvatura.</b><br>Antes de asegurar nada, revisa la segunda derivada para confirmar si el punto hallado es realmente una cima o un valle.</p>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    if not st.session_state.mostrar_solucion:
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🔍 Ver Solución Paso a Paso Completa"):
-            st.session_state.mostrar_solucion = True
-            st.rerun()
-    else:
-        st.markdown("---")
-        st.markdown("### 📊 Solución Detallada Paso a Paso:")
+    # Mensaje del usuario simulado en el chat
+    with st.chat_message("user", avatar="👤"):
+        st.markdown(f"**Enunciado / Contexto:** {prob['enunciado']}")
+        st.markdown(f"**Función a optimizar:**")
+        st.latex(f"f(x) = {prob['funcion_latex']}")
         
-        for paso in prob['pasos_narrativos']:
-            st.markdown(paso['texto'])
-            if paso.get('latex'):
-                st.latex(paso['latex'])
-            if paso.get('subtext'):
-                st.markdown(paso['subtext'])
-            st.markdown("")
+    # Respuesta del Asistente IA
+    with st.chat_message("assistant", avatar="🤖"):
+        st.markdown("¡Hola de nuevo! Analicemos este ejercicio paso a paso. Aquí tienes algunas pistas conceptuales para guiar tu razonamiento:")
+        
+        st.markdown(f"""
+            <div class="tip-box-chat">
+                <p style="margin-bottom: 8px;"><b>💡 Pista 1: Visualiza la forma geométrica.</b><br>Piensa en qué tipo de curva representa tu función y hacia dónde abre. Eso te orienta sobre el tipo de extremo que buscas.</p>
+                <p style="margin-bottom: 8px;"><b>💡 Pista 2: El papel de la pendiente.</b><br>Recuerda qué representa gráficamente la primera derivada en la cumbre o el valle de una función.</p>
+                <p style="margin-bottom: 8px;"><b>💡 Pista 3: Planteamiento del punto crítico.</b><br>Deriva la función e iguala a cero para despejar los valores candidatos de <i>x</i>.</p>
+                <p style="margin-bottom: 0px;"><b>💡 Pista 4: La prueba de la curvatura.</b><br>Usa la segunda derivada para confirmar si el punto hallado es un máximo o un mínimo.</p>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        if not st.session_state.mostrar_solucion:
+            if st.button("🔍 Revelar Solución Paso a Paso"):
+                st.session_state.mostrar_solucion = True
+                st.rerun()
+        else:
+            st.markdown("---")
+            st.markdown("### 📊 Desglose de la Solución:")
+            for paso in prob['pasos_narrativos']:
+                st.markdown(paso['texto'])
+                if paso.get('latex'):
+                    st.latex(paso['latex'])
+                if paso.get('subtext'):
+                    st.markdown(paso['subtext'])
+                st.markdown("")
 
+            if st.button("Ocultar solución"):
+                st.session_state.mostrar_solucion = False
+                st.rerun()
+                
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("Ocultar solución"):
+        if st.button("🔄 Iniciar otro análisis"):
+            st.session_state.problema_activo = None
             st.session_state.mostrar_solucion = False
             st.rerun()
-            
-    st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("⬅️ Analizar otro problema"):
-        st.session_state.problema_activo = None
-        st.session_state.mostrar_solucion = False
-        st.rerun()
 
 else:
-    st.markdown("""
-        <p style="color: #475569; font-size: 15px; margin-bottom: 20px;">Bienvenido al módulo de cálculo y optimización. Ingresa la función objetivo de tu problema expresada en función de <b>x</b> para recibir guía analítica, pistas conceptuales y el desglose paso a paso.</p>
-    """, unsafe_allow_html=True)
+    # Estado inicial de chat vacío / bienvenida
+    with st.chat_message("assistant", avatar="🤖"):
+        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función matemática o problema de optimización de una sola variable quieres que analicemos hoy?")
     
-    enunciado_user = st.text_area("Enunciado o contexto del problema (Opcional):", placeholder="Ej: Determinar las dimensiones para maximizar el área...", height=90)
-    funcion_str = st.text_input("Función objetivo $f(x)$:", placeholder="Ej: x*(12 - 2*x)^2")
+    # Entrada de chat inferior nativa de Streamlit
+    user_input = st.chat_input("Escribe tu función f(x) o el contexto del problema...")
     
-    st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("⚡ Iniciar Análisis de Optimización", use_container_width=True):
-        if not funcion_str.strip():
-            st.warning("⚠️ Por favor ingresa una función matemática válida.")
-        elif "=" in funcion_str or "y" in funcion_str.lower():
-            st.error("⚠️ Ojo aquí: Este asistente resuelve funciones de **una sola variable (en términos de x)**. Si tienes una ecuación con 'y' o un signo '=', debes despejar la variable y escribir únicamente la expresión final en términos de x.")
+    if user_input:
+        if "=" in user_input and "x" not in user_input.lower(): # Validación básica orientativa
+            st.warning("⚠️ Recuerda ingresar la expresión en términos de la variable **x**.")
         else:
+            # Si el usuario escribe directamente la función en el chat
+            funcion_str = user_input
+            enunciado_user = "Análisis directo desde el chat."
+            
+            # Limpieza y procesamiento idéntico al algoritmo original
             try:
                 funcion_saneada = limpiar_sintaxis_matematica(funcion_str)
                 f_expr = sp.sympify(funcion_saneada, locals={'x': x})
                 
                 if not any(s.name == 'x' for s in f_expr.free_symbols):
-                    st.error("⚠️ La expresión ingresada no contiene la variable 'x'. Asegúrate de escribirla correctamente.")
+                    st.error("⚠️ La expresión no contiene la variable 'x'. Inténtalo de nuevo.")
                 else:
                     f_prime = sp.diff(f_expr, x)
                     f_double_prime = sp.diff(f_prime, x)
                     puntos_criticos = sp.solve(f_prime, x)
                     
                     pasos_narrativos = []
-                    
-                    # 1. Planteamiento y Derivada
                     pasos_narrativos.append({
-                        "texto": "**Planteamiento y Derivada**\n\nLa función ya se encuentra expresada en términos de una única variable ($x$). Para encontrar el punto crítico, calculamos la primera derivada de $f(x)$ respecto a $x$:",
+                        "texto": "**Planteamiento y Derivada**\n\nLa función está expresada en términos de una única variable ($x$). Calculamos su primera derivada:",
                         "latex": f"f'(x) = {sp.latex(f_prime)}"
                     })
                     
-                    # 2. Punto Crítico
                     pasos_narrativos.append({
-                        "texto": "**Punto Crítico**\n\nIgualamos la derivada a cero para hallar el valor de $x$:",
+                        "texto": "**Punto Crítico**\n\nIgualamos la derivada a cero:",
                         "latex": f"{sp.latex(f_prime)} = 0"
                     })
                     
@@ -242,30 +219,28 @@ else:
                         })
                         
                         pasos_narrativos.append({
-                            "texto": f"Esto significa que el punto crítico se encuentra en $x = {x_num:g}$."
+                            "texto": f"El punto crítico se localiza en $x = {x_num:g}$."
                         })
                         
-                        # 3. Verificación del Extremo
                         pasos_narrativos.append({
-                            "texto": "**Verificación del Máximo / Mínimo**\n\nAplicamos el criterio de la segunda derivada para comprobar de qué tipo de extremo se trata:",
+                            "texto": "**Verificación del Extremo**\n\nAplicamos el criterio de la segunda derivada:",
                             "latex": f"f''(x) = {sp.latex(f_double_prime)}",
-                            "subtext": f"Dado que la segunda derivada evaluada es $f''(x) {signo_str}$, el criterio confirma que $x = {x_num:g}$ corresponde a un **{tipo_extremo}**."
+                            "subtext": f"Como $f''(x) {signo_str}$, confirmamos que se trata de un **{tipo_extremo}**."
                         })
                         
-                        # 4. Cálculo del Valor Óptimo
                         pasos_narrativos.append({
-                            "texto": f"**Cálculo del Valor Óptimo**\n\nSustituimos $x = {x_num:g}$ en la función original:",
+                            "texto": f"**Valor Óptimo**\n\nEvaluamos en la función original:",
                             "latex": f"f({x_num:g}) = {sp.latex(f_expr.subs(x, pc))}",
-                            "subtext": f"Resultado final de la evaluación óptima: **{val_y:g}**"
+                            "subtext": f"Resultado óptimo: **{val_y:g}**"
                         })
                     else:
                         pasos_narrativos.append({
-                            "texto": "No se encontraron puntos críticos reales para esta función con los parámetros dados."
+                            "texto": "No se hallaron puntos críticos reales con los parámetros ingresados."
                         })
                     
                     nuevo_item = {
-                        "titulo": enunciado_user[:25] if enunciado_user else f"Función: {funcion_str[:15]}",
-                        "enunciado": enunciado_user if enunciado_user else "Análisis de optimización directa.",
+                        "titulo": f"Función: {funcion_str[:15]}",
+                        "enunciado": enunciado_user,
                         "funcion_latex": sp.latex(f_expr),
                         "pasos_narrativos": pasos_narrativos
                     }
@@ -275,7 +250,4 @@ else:
                     st.rerun()
                     
             except Exception as e:
-                st.error(f"⚠️ Error al interpretar la función. Revisa la sintaxis. Detalle: {e}")
-
-st.markdown('</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
+                st.error(f"⚠️ No pude interpretar la sintaxis matemática. Detalle: {e}")
