@@ -1,15 +1,63 @@
 import streamlit as st
+import sympy as sp
 
-st.title("Tutor de Optimización con IA")
-st.write("¡Bienvenido! Este espacio te guiará paso a paso para resolver problemas de optimización de una variable sin darte la respuesta directa.")
+st.title("🧮 Solucionador de Optimización de una Variable")
+st.write("Ingresa una función y esta herramienta te ayudará a resolver el problema de optimización paso a paso: derivada, puntos críticos y clasificación.")
 
-funcion_usuario = st.text_input("Ingresa tu función en términos de x (por ejemplo: x**2 - 4*x):", "")
 
-if funcion_usuario:
-    st.write(f"Has ingresado la función: **$f(x) = {funcion_usuario}$**")
-    st.write("Ahora, intenta calcular la primera derivada $f'(x)$ en tu cuaderno o calculadora. ¿Cuál crees que es el primer paso?")
-  
-    intento_derivada = st.text_input("Escribe tu propuesta para la derivada:", "")
-    
-    if intento_derivada:
-        st.info("¡Buen intento! Vamos a revisar la lógica paso a paso para ver si nos acercamos al punto crítico.")
+x = sp.Symbol('x', real=True)
+
+funcion_str = st.text_input("Ingresa la función f(x) (ejemplo: x**3 - 3*x + 2):", "x**3 - 3*x + 2")
+
+if funcion_str:
+    try:
+
+        f_expr = sp.sympify(funcion_str)
+        
+        st.markdown("---")
+        st.subheader("1. Función analizada")
+        st.latex(f"f(x) = {sp.latex(f_expr)}")
+        
+
+        f_prime = sp.diff(f_expr, x)
+        st.subheader("2. Primera Derivada f'(x)")
+        st.write("Calculamos la derivada para encontrar las posibles pendientes cero:")
+        st.latex(f"f'(x) = {sp.latex(f_prime)}")
+        
+        st.subheader("3. Puntos Críticos")
+        st.write("Igualamos la primera derivada a cero ($f'(x) = 0$) para hallar los valores críticos:")
+        
+        puntos_criticos = sp.solve(f_prime, x)
+        
+        if puntos_criticos:
+            st.write("Se encontraron los siguientes valores críticos de $x$:")
+            for pc in puntos_criticos:
+                st.latex(f"x = {sp.latex(pc)}")
+                
+            st.subheader("4. Clasificación (Criterio de la Segunda Derivada)")
+            f_double_prime = sp.diff(f_prime, x)
+            st.write("Evaluamos la segunda derivada $f''(x)$ en los puntos críticos:")
+            st.latex(f"f''(x) = {sp.latex(f_double_prime)}")
+            
+            for pc in puntos_criticos:
+
+                val_segunda = f_double_prime.subs(x, pc)
+                val_y = f_expr.subs(x, pc)
+                
+                try:
+                    val_num = float(val_segunda)
+                    y_num = float(val_y)
+                    
+                    if val_num > 0:
+                        st.success(لf"En $x = {pc}$, $f''(x) = {val_num} > 0$. Por lo tanto, hay un **MÍNIMO LOCAL** en el punto $({pc}, {y_num})$")
+                    elif val_num < 0:
+                        st.success(f"En $x = {pc}$, $f''(x) = {val_num} < 0$. Por lo tanto, hay un **MÁXIMO LOCAL** en el punto $({pc}, {y_num})$")
+                    else:
+                        st.warning(f"En $x = {pc}$, $f''(x) = 0$. El criterio no es concluyente.")
+                except:
+                    st.info(f"Encontrado punto crítico en $x = {pc}$, con valor $y = {val_y}$.")
+        else:
+            st.warning("No se encontraron puntos críticos reales para esta función.")
+            
+    except Exception as e:
+        st.error(f"Hubo un error al interpretar la función. Revisa la sintaxis (usa '*' para multiplicar y '**' para potencias). Detalle: {e}")
