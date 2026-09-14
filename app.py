@@ -10,9 +10,12 @@ st.set_page_config(
 
 # --- BARRA LATERAL (IDENTIDAD Y OPCIONES) ---
 with st.sidebar:
-    # Si tienes el link de la imagen de la UIS o un archivo local, puedes ponerlo aquí. 
-    # Por ahora dejamos un contenedor para la imagen y el membrete institucional.
-    st.image("https://upload.wikimedia.org/wikipedia/commons/b/b3/Logo_UIS.png", width=120) # Logo referencial de la UIS
+    # Cargamos tu imagen local en formato webp
+    try:
+        st.image("logo_uis.webp", use_container_width=True)
+    except:
+        st.warning("Coloca el archivo 'logo_uis.webp' en la misma carpeta para ver el logo.")
+        
     st.markdown("### Universidad Industrial de Santander")
     st.markdown("**Sede Barrancabermeja**")
     st.markdown("Ingeniería en Inteligencia Artificial")
