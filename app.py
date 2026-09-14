@@ -9,7 +9,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILOS CSS CORREGIDOS Y UNIFICADOS ---
+# --- ESTILOS CSS LIMPIOS ---
 st.markdown("""
     <style>
     .stApp {
@@ -42,13 +42,6 @@ st.markdown("""
         border-radius: 0 8px 8px 0;
         margin: 15px 0;
         color: #1E293B;
-    }
-    .step-box {
-        background-color: #F8FAF9;
-        border: 1px solid #CBD5E1;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 12px;
     }
     .stButton > button {
         background-color: #007A33;
@@ -137,16 +130,18 @@ st.markdown('<div class="uis-body">', unsafe_allow_html=True)
 if st.session_state.problema_activo:
     prob = st.session_state.problema_activo
     
-    st.markdown(f"#### 📄 Análisis del Problema")
-    st.info(f"**Enunciado:** {prob['enunciado']}\n\n**Función Objetivo:** $f(x) = {prob['funcion_latex']}$")
+    st.markdown("#### 📄 Análisis del Problema")
+    st.markdown(f"**Enunciado:** {prob['enunciado']}")
+    st.markdown("**Función Objetivo:**")
+    st.latex(f"f(x) = {prob['funcion_latex']}")
     
     st.markdown("### 🧠 Pistas y Tips de Resolución:")
     st.markdown("""
         <div class="tip-box">
-            <p style="margin-bottom: 10px;"><b>💡 Tip 1: Comprende el objetivo.</b><br>Estamos buscando los valores óptimos (máximos o mínimos) de la función en el intervalo de estudio.</p>
-            <p style="margin-bottom: 10px;"><b>💡 Tip 2: Deriva con cuidado.</b><br>Calcula la primera derivada $f'(x)$ aplicando las reglas básicas de derivación para conocer el ritmo de cambio.</p>
-            <p style="margin-bottom: 10px;"><b>💡 Tip 3: Halla los puntos críticos.</b><br>Iguala la primera derivada a cero ($f'(x) = 0$) y resuelve la ecuación para encontrar las posibles ubicaciones de los extremos.</p>
-            <p style="margin-bottom: 0px;"><b>💡 Tip 4: Aplica la segunda derivada.</b><br>Sustituye los puntos críticos en $f''(x)$. Si el resultado es menor que cero, es un máximo; si es mayor, es un mínimo.</p>
+            <p style="margin-bottom: 8px;"><b>💡 Tip 1: Comprende el objetivo.</b><br>Buscamos los valores óptimos (máximos o mínimos) analizando el comportamiento de la función.</p>
+            <p style="margin-bottom: 8px;"><b>💡 Tip 2: Deriva con cuidado.</b><br>Calcula la primera derivada f'(x) para conocer la tasa de cambio.</p>
+            <p style="margin-bottom: 8px;"><b>💡 Tip 3: Halla los puntos críticos.</b><br>Iguala f'(x) = 0 y despeja x para encontrar los posibles extremos.</p>
+            <p style="margin-bottom: 0px;"><b>💡 Tip 4: Criterio de la segunda derivada.</b><br>Sustituye los puntos críticos en f''(x) para clasificarlos.</p>
         </div>
     """, unsafe_allow_html=True)
     
@@ -157,8 +152,29 @@ if st.session_state.problema_activo:
     else:
         st.markdown("---")
         st.markdown("### 📊 Solución Detallada Paso a Paso:")
-        st.markdown(prob['html_solucion'], unsafe_allow_html=True)
         
+        # Paso 1
+        with st.container():
+            st.markdown("**Paso 1: Cálculo de la primera derivada**")
+            st.markdown("Derivamos la función objetivo con respecto a $x$:")
+            st.latex(f"f'(x) = {prob['f_prime_latex']}")
+            st.markdown("Igualamos a cero ($f'(x) = 0$) para hallar los puntos críticos.")
+
+        # Paso 2
+        with st.container():
+            st.markdown("---")
+            st.markdown("**Paso 2: Cálculo de la segunda derivada**")
+            st.markdown("Obtenemos $f''(x)$ para aplicar el criterio de concavidad:")
+            st.latex(f"f''(x) = {prob['f_double_prime_latex']}")
+
+        # Paso 3
+        with st.container():
+            st.markdown("---")
+            st.markdown("**Paso 3: Evaluación y clasificación de extremos**")
+            for eval_item in prob['evaluaciones']:
+                st.info(eval_item)
+
+        st.markdown("<br>", unsafe_allow_html=True)
         if st.button("Ocultar solución"):
             st.session_state.mostrar_solucion = False
             st.rerun()
@@ -191,16 +207,7 @@ else:
                 f_double_prime = sp.diff(f_prime, x)
                 puntos_criticos = sp.solve(f_prime, x)
                 
-                html_paso_a_paso = f"""
-                <div class="step-box">
-                    <b>Paso 1: Cálculo de la primera derivada</b><br>
-                    Derivamos la función objetivo con respecto a $x$:<br>
-                    <code style="background: white; padding: 2px 6px; border-radius: 4px;">f'(x) = {sp.latex(f_prime)}</code><br><br>
-                    Igualamos a cero ($f'(x) = 0$) para hallar los puntos críticos.
-                </div>
-                """
-                
-                detalle_evaluacion = ""
+                lista_evaluaciones = []
                 if puntos_criticos:
                     for pc in puntos_criticos:
                         try:
@@ -210,36 +217,23 @@ else:
                             tipo_extremo = "máximo local" if val_seg < 0 else "mínimo local"
                             signo_str = "< 0" if val_seg < 0 else "> 0"
                             
-                            detalle_evaluacion += f"""
-                            <div style="background: white; padding: 10px; border-radius: 6px; margin-top: 8px; border: 1px solid #CBD5E1;">
-                                <b>• Para $x = {x_num:.2f}$:</b><br>
-                                Evaluamos en la segunda derivada: $f''({x_num:.2f}) = {val_seg:.2f}$ ({signo_str}).<br>
-                                Conclusión: Existe un <b>{tipo_extremo}</b>.<br>
-                                Valor óptimo en la función: $f({x_num:.2f}) = {val_y:.2f}$
-                            </div>
-                            """
-                        except:
-                            detalle_evaluacion += f"<div>Punto crítico en $x = {pc}$</div>"
+                            texto_eval = f"**• Para $x = {x_num:.4f}$:**\n\n" \
+                                         f"- Evaluamos en la segunda derivada: $f''({x_num:.4f}) = {val_seg:.4f}$ ({signo_str}).\n" \
+                                         f"- Conclusión: Existe un **{tipo_extremo}**.\n" \
+                                         f"- Valor óptimo en la función: $f({x_num:.4f}) = {val_y:.4f}$"
+                            lista_evaluaciones.append(texto_eval)
+                        except Exception as ex:
+                            lista_evaluaciones.append(f"Punto crítico encontrado en $x = {pc}$, pero no se pudo evaluar numéricamente ({ex}).")
                 else:
-                    detalle_evaluacion = "<div>No se encontraron puntos críticos reales.</div>"
-                
-                html_paso_a_paso += f"""
-                <div class="step-box">
-                    <b>Paso 2: Cálculo de la segunda derivada</b><br>
-                    Obtenemos $f''(x)$ para aplicar el criterio de concavidad:<br>
-                    <code style="background: white; padding: 2px 6px; border-radius: 4px;">f''(x) = {sp.latex(f_double_prime)}</code>
-                </div>
-                <div class="step-box">
-                    <b>Paso 3: Evaluación y clasificación de extremos</b>
-                    {detalle_evaluacion}
-                </div>
-                """
+                    lista_evaluaciones.append("No se encontraron puntos críticos reales para esta función.")
                 
                 nuevo_item = {
                     "titulo": enunciado_user[:25] if enunciado_user else f"Función: {funcion_str[:15]}",
                     "enunciado": enunciado_user if enunciado_user else "Análisis de optimización directa.",
                     "funcion_latex": sp.latex(f_expr),
-                    "html_solucion": html_paso_a_paso
+                    "f_prime_latex": sp.latex(f_prime),
+                    "f_double_prime_latex": sp.latex(f_double_prime),
+                    "evaluaciones": lista_evaluaciones
                 }
                 st.session_state.historial_problemas.append(nuevo_item)
                 st.session_state.problema_activo = nuevo_item
