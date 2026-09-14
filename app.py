@@ -70,9 +70,16 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def limpiar_sintaxis_matematica(expresion: str) -> str:
+    # Cambiar ^ por potenciación de python
     exp = expresion.replace("^", "**")
-    exp = re.sub(r'([a-zA-Z])(\d+)', r'\1**\2', exp)
+    # Manejar multiplicación implícita antes de un paréntesis: x( o 2( o )( -> x*( o 2*( o )*(
+    exp = re.sub(r'([a-zA-Z0-9\)])\(', r'\1*(', exp)
+    # Manejar multiplicación implícita después de un paréntesis: )x o )2 -> )*x or )*2
+    exp = re.sub(r'\)([a-zA-Z0-9])', r')*\1', exp)
+    # Número seguido de letra: 2x -> 2*x
     exp = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', exp)
+    # Letra seguida de número (si aplica): x2 -> x**2
+    exp = re.sub(r'([a-zA-Z])(\d+)', r'\1**\2', exp)
     return exp
 
 if "historial_problemas" not in st.session_state:
@@ -178,7 +185,7 @@ else:
     """, unsafe_allow_html=True)
     
     enunciado_user = st.text_area("Enunciado o contexto del problema (Opcional):", placeholder="Ej: Determinar las dimensiones para maximizar el área...", height=90)
-    funcion_str = st.text_input("Función objetivo $f(x)$:", placeholder="Ej: -2*x**2 + 16*x - 24")
+    funcion_str = st.text_input("Función objetivo $f(x)$:", placeholder="Ej: x*(12 - 2*x)^2")
     
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("⚡ Iniciar Análisis de Optimización", use_container_width=True):
@@ -189,7 +196,6 @@ else:
         else:
             try:
                 funcion_saneada = limpiar_sintaxis_matematica(funcion_str)
-                # Corrección clave: asociar explícitamente el símbolo x para que SymPy lo reconozca
                 f_expr = sp.sympify(funcion_saneada, locals={'x': x})
                 
                 if not any(s.name == 'x' for s in f_expr.free_symbols):
@@ -214,7 +220,16 @@ else:
                     })
                     
                     if puntos_criticos:
-                        pc = puntos_criticos[0]
+                        # Filtramos solo raíces reales si es posible, o tomamos la primera real
+                        pc_real = None
+                        for pc in puntos_criticos:
+                            if pc.is_real:
+                                pc_real = pc
+                                break
+                        if not pc_real and puntos_criticos:
+                            pc_real = puntos_criticos[0]
+                            
+                        pc = pc_real
                         x_num = float(pc.evalf())
                         val_seg = float(f_double_prime.subs(x, pc).evalf())
                         val_y = float(f_expr.subs(x, pc).evalf())
@@ -222,7 +237,6 @@ else:
                         tipo_extremo = "máximo absoluto" if val_seg < 0 else ("mínimo absoluto" if val_seg > 0 else "extremo")
                         signo_str = "< 0" if val_seg < 0 else ("> 0" if val_seg > 0 else "= 0")
                         
-                        # Despeje simulando la estructura visual de la imagen
                         pasos_narrativos.append({
                             "texto": "",
                             "latex": f"{sp.latex(f_prime)} = 0 \\implies x = {x_num:g}" if pc.is_Integer else f"{sp.latex(f_prime)} = 0 \\implies x = {x_num:.4f}"
@@ -236,14 +250,10 @@ else:
                         pasos_narrativos.append({
                             "texto": "**Verificación del Máximo / Mínimo**\n\nAplicamos el criterio de la segunda derivada para comprobar de qué tipo de extremo se trata:",
                             "latex": f"f''(x) = {sp.latex(f_double_prime)}",
-                            "subtext": f"Dado que la segunda derivada es negativa ($f''(x) {signo_str}$), la concavidad confirma que $x = {x_num:g}$ corresponde a un **{tipo_extremo}**."
+                            "subtext": f"Dado que la segunda derivada evaluada es $f''(x) {signo_str}$, el criterio confirma que $x = {x_num:g}$ corresponde a un **{tipo_extremo}**."
                         })
                         
-                        # 4. Cálculo del Valor Óptimo (Sustitución paso a paso idéntica a la referencia)
-                        sub_original = str(f_expr)
-                        # Reemplazamos x por el valor numérico para mostrar el desglose algebraico
-                        sub_eval_1 = sub_original.replace('x', f'({x_num:g})')
-                        
+                        # 4. Cálculo del Valor Óptimo
                         pasos_narrativos.append({
                             "texto": f"**Cálculo del Valor Óptimo**\n\nSustituimos $x = {x_num:g}$ en la función original:",
                             "latex": f"f({x_num:g}) = {sp.latex(f_expr.subs(x, pc))}",
@@ -269,4 +279,4 @@ else:
                 st.error(f"⚠️ Error al interpretar la función. Revisa la sintaxis. Detalle: {e}")
 
 st.markdown('</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_app_html=True)
