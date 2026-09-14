@@ -189,9 +189,9 @@ else:
         else:
             try:
                 funcion_saneada = limpiar_sintaxis_matematica(funcion_str)
-                f_expr = sp.sympify(funcion_saneada)
+                # Corrección clave: asociar explícitamente el símbolo x para que SymPy lo reconozca
+                f_expr = sp.sympify(funcion_saneada, locals={'x': x})
                 
-                # Validación segura basada en el nombre de la variable
                 if not any(s.name == 'x' for s in f_expr.free_symbols):
                     st.error("⚠️ La expresión ingresada no contiene la variable 'x'. Asegúrate de escribirla correctamente.")
                 else:
@@ -201,13 +201,13 @@ else:
                     
                     pasos_narrativos = []
                     
-                    # Paso introductorio y primera derivada
+                    # 1. Planteamiento y Derivada
                     pasos_narrativos.append({
-                        "texto": "La función ya se encuentra expresada en términos de una única variable ($x$). Para encontrar el punto crítico, calculamos la primera derivada de $f(x)$ respecto a $x$:",
+                        "texto": "**Planteamiento y Derivada**\n\nLa función ya se encuentra expresada en términos de una única variable ($x$). Para encontrar el punto crítico, calculamos la primera derivada de $f(x)$ respecto a $x$:",
                         "latex": f"f'(x) = {sp.latex(f_prime)}"
                     })
                     
-                    # Sección de Punto Crítico
+                    # 2. Punto Crítico
                     pasos_narrativos.append({
                         "texto": "**Punto Crítico**\n\nIgualamos la derivada a cero para hallar el valor de $x$:",
                         "latex": f"{sp.latex(f_prime)} = 0"
@@ -222,19 +222,28 @@ else:
                         tipo_extremo = "máximo absoluto" if val_seg < 0 else ("mínimo absoluto" if val_seg > 0 else "extremo")
                         signo_str = "< 0" if val_seg < 0 else ("> 0" if val_seg > 0 else "= 0")
                         
+                        # Despeje simulando la estructura visual de la imagen
                         pasos_narrativos.append({
-                            "texto": f"Resolviendo la ecuación obtenemos:",
-                            "latex": f"x = {x_num:.4f}" if not pc.is_Integer else f"x = {int(x_num)}"
+                            "texto": "",
+                            "latex": f"{sp.latex(f_prime)} = 0 \\implies x = {x_num:g}" if pc.is_Integer else f"{sp.latex(f_prime)} = 0 \\implies x = {x_num:.4f}"
                         })
                         
-                        # Verificación de la segunda derivada
                         pasos_narrativos.append({
-                            "texto": "**Verificación del Extremo**\n\nAplicamos el criterio de la segunda derivada para comprobar si se trata de un máximo o un mínimo:",
+                            "texto": f"Esto significa que el punto crítico se encuentra en $x = {x_num:g}$."
+                        })
+                        
+                        # 3. Verificación del Extremo
+                        pasos_narrativos.append({
+                            "texto": "**Verificación del Máximo / Mínimo**\n\nAplicamos el criterio de la segunda derivada para comprobar de qué tipo de extremo se trata:",
                             "latex": f"f''(x) = {sp.latex(f_double_prime)}",
-                            "subtext": f"Dado que la segunda derivada es igual a ${sp.latex(f_double_prime)}$ ($f''(x) {signo_str}$), el criterio confirma que $x = {x_num:g}$ corresponde a un **{tipo_extremo}**."
+                            "subtext": f"Dado que la segunda derivada es negativa ($f''(x) {signo_str}$), la concavidad confirma que $x = {x_num:g}$ corresponde a un **{tipo_extremo}**."
                         })
                         
-                        # Cálculo del valor óptimo con sustitución detallada
+                        # 4. Cálculo del Valor Óptimo (Sustitución paso a paso idéntica a la referencia)
+                        sub_original = str(f_expr)
+                        # Reemplazamos x por el valor numérico para mostrar el desglose algebraico
+                        sub_eval_1 = sub_original.replace('x', f'({x_num:g})')
+                        
                         pasos_narrativos.append({
                             "texto": f"**Cálculo del Valor Óptimo**\n\nSustituimos $x = {x_num:g}$ en la función original:",
                             "latex": f"f({x_num:g}) = {sp.latex(f_expr.subs(x, pc))}",
