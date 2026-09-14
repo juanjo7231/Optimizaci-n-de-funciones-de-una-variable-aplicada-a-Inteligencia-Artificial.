@@ -52,13 +52,13 @@ if funcion_str:
                     y_num = float(val_y)
                     
                     if val_num > 0:
-                        st.success(لf"En $x = {pc}$, $f''(x) = {val_num} > 0$. Por lo tanto, hay un **MÍNIMO LOCAL** en el punto $({pc}, {y_num})$")
+                        st.success(f"En x = {pc}, f''(x) = {val_num} > 0. Por lo tanto, hay un MÍNIMO LOCAL en el punto ({pc}, {y_num})")
                     elif val_num < 0:
-                        st.success(f"En $x = {pc}$, $f''(x) = {val_num} < 0$. Por lo tanto, hay un **MÁXIMO LOCAL** en el punto $({pc}, {y_num})$")
+                        st.success(f"En x = {pc}, f''(x) = {val_num} < 0. Por lo tanto, hay un MÁXIMO LOCAL en el punto ({pc}, {y_num})")
                     else:
-                        st.warning(f"En $x = {pc}$, $f''(x) = 0$. El criterio no es concluyente.")
+                        st.warning(f"En x = {pc}, f''(x) = 0. El criterio no es concluyente.")
                 except:
-                    st.info(f"Encontrado punto crítico en $x = {pc}$, con valor $y = {val_y}$.")
+                    st.info(f"Encontrado punto crítico en x = {pc}, con valor y = {val_y}.")
         else:
             st.warning("No se encontraron puntos críticos reales para esta función.")
             
