@@ -154,7 +154,8 @@ def limpiar_sintaxis_matematica(expresion: str) -> str:
     exp = re.sub(r'^[a-zA-Z_][a-zA-Z0-9_]*\s*\([xX]\)\s*=', '', exp)
     
     exp = exp.replace("^", "**")
-    exp = re.sub(r'([a-zA-Z0-9\)])\(', r'\1*(', exp)     exp = re.sub(r'\)([a-zA-Z0-9])', r')*\1', exp)
+    exp = re.sub(r'([a-zA-Z0-9\)])\(', r'\1*(', exp)
+    exp = re.sub(r'\)([a-zA-Z0-9])', r')*\1', exp)
     exp = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', exp)
     exp = re.sub(r'([a-zA-Z])(\d+)', r'\1**\2', exp)
     return exp.strip()
@@ -313,4 +314,43 @@ else:
                         val_seg = float(f_double_prime.subs(x, pc).evalf())
                         val_y = float(f_expr.subs(x, pc).evalf())
                         
-                        tipo_
+                        tipo_extremo = "máximo absoluto" if val_seg < 0 else ("mínimo absoluto" if val_seg > 0 else "extremo")
+                        signo_str = "< 0" if val_seg < 0 else ("> 0" if val_seg > 0 else "= 0")
+                        
+                        pasos_narrativos.append({
+                            "texto": "",
+                            "latex": f"{sp.latex(f_prime)} = 0 \\implies x = {x_num:g}" if pc.is_Integer else f"{sp.latex(f_prime)} = 0 \\implies x = {x_num:.4f}"
+                        })
+                        
+                        pasos_narrativos.append({
+                            "texto": f"El punto crítico se localiza en $x = {x_num:g}$."
+                        })
+                        
+                        pasos_narrativos.append({
+                            "texto": "**Verificación del Extremo**\n\nAplicamos el criterio de la segunda derivada:",
+                            "latex": f"f''(x) = {sp.latex(f_double_prime)}",
+                            "subtext": f"Como $f''(x) {signo_str}$, confirmamos que se trata de un **{tipo_extremo}**."
+                        })
+                        
+                        pasos_narrativos.append({
+                            "texto": f"**Valor Óptimo**\n\nEvaluamos en la función original:",
+                            "latex": f"f({x_num:g}) = {sp.latex(f_expr.subs(x, pc))}",
+                            "subtext": f"Resultado óptimo: **{val_y:g}**"
+                        })
+                    else:
+                        pasos_narrativos.append({
+                            "texto": "No se hallaron puntos críticos reales con los parámetros ingresados."
+                        })
+                    
+                    nuevo_item = {
+                        "titulo": f"f(x): {funcion_str[:20]}",
+                        "funcion_latex": sp.latex(f_expr),
+                        "pasos_narrativos": pasos_narrativos
+                    }
+                    st.session_state.historial_problemas.append(nuevo_item)
+                    st.session_state.problema_activo = nuevo_item
+                    st.session_state.mostrar_solucion = False
+                    st.rerun()
+                    
+            except Exception as e:
+                st.error(f"⚠️ No pude interpretar la sintaxis matemática. Asegúrate de ingresar una expresión válida en términos de x. Detalle: {e}")
