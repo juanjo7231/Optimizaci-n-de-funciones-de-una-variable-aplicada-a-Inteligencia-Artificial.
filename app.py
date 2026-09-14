@@ -10,7 +10,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILOS CSS CORREGIDOS (TEXTO DE ENTRADA VISIBLE) ---
+# --- ESTILOS CSS CORREGIDOS (INPUT GRIS Y TEXTO BLANCO) ---
 st.markdown("""
     <style>
     .stApp {
@@ -23,15 +23,23 @@ st.markdown("""
     .stChatMessage p, .stChatMessage span, .stChatMessage div {
         color: #1E293B !important;
     }
-    /* Estilos robustos para el input del chat */
+    
+    /* Configuración para que el cuadro de texto sea gris y lo que escribas sea blanco */
     .stChatInput textarea, .stChatInput input {
-        color: #1E293B !important;
-        background-color: #FFFFFF !important;
-        -webkit-text-fill-color: #1E293B !important;
+        color: #FFFFFF !important;
+        background-color: #1E293B !important;
+        -webkit-text-fill-color: #FFFFFF !important;
     }
     div[data-baseweb="input"], div[data-baseweb="base-input"], div[data-baseweb="textarea"] {
-        background-color: #FFFFFF !important;
+        background-color: #1E293B !important;
+        border-radius: 8px !important;
     }
+    /* Color del texto de placeholder (guía) dentro del input */
+    .stChatInput textarea::placeholder {
+        color: #94A3B8 !important;
+        opacity: 1 !important;
+    }
+
     .uis-header {
         background-color: #007A33;
         color: white;
