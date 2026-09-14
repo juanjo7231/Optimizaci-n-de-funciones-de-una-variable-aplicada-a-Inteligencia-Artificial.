@@ -9,34 +9,36 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILOS CSS CON ESTILO UIS (VERDE INSTITUCIONAL) ---
+# --- ESTILOS CSS CORREGIDOS Y UNIFICADOS ---
 st.markdown("""
     <style>
     .stApp {
         background-color: #F4F7F5;
         color: #1E293B;
     }
-    /* Cabecera estilo UIS */
+    /* Contenedor maestro unificado para evitar huecos raros */
+    .main-container {
+        background-color: #FFFFFF;
+        border-radius: 12px;
+        border: 1px solid #E2E8F0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+    /* Cabecera integrada */
     .uis-header {
         background-color: #007A33;
         color: white;
-        padding: 20px;
-        border-radius: 12px 12px 0 0;
+        padding: 22px 25px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
-    .uis-card {
-        background-color: #FFFFFF;
-        border-radius: 0 0 12px 12px;
+    /* Cuerpo interno de la tarjeta */
+    .uis-body {
         padding: 25px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        margin-bottom: 20px;
-        border: 1px solid #E2E8F0;
-        border-top: none;
     }
-    /* Burbujas de diálogo y pistas */
+    /* Burbujas y cajas de pasos */
     .tip-box {
         background-color: #E2F6EC;
         border-left: 5px solid #007A33;
@@ -70,6 +72,10 @@ st.markdown("""
         color: #1E293B !important;
         border: 1px solid #CBD5E1 !important;
         border-radius: 8px !important;
+    }
+    .stTextInput label, .stTextArea label {
+        color: #1E293B !important;
+        font-weight: 500;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -119,134 +125,393 @@ with st.sidebar:
 
 x = sp.Symbol('x', real=True)
 
-# --- CABECERA ESTILO UIS ---
+# --- ESTRUCTURA MAESTRA UNIFICADA ---
+st.markdown('<div class="main-container">', unsafe_allow_html=True)
+
+# Cabecera dentro del contenedor unificado
 st.markdown("""
     <div class="uis-header">
         <div>
             <h3 style="margin: 0; color: white; font-size: 20px;">Asistente de Optimización - UIS</h3>
             <span style="font-size: 13px; color: #E2F6EC;">Ingeniería en Inteligencia Artificial</span>
         </div>
-        <span style="background-color: #005E27; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: 600;">Académico</span>
+        <span style="background-color: #005E27; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; color: white;">Académico</span>
     </div>
 """, unsafe_allow_html=True)
 
-# --- CUERPO PRINCIPAL ---
-with st.container():
-    st.markdown('<div class="uis-card">', unsafe_allow_html=True)
+# Cuerpo de la tarjeta
+st.markdown('<div class="uis-body">', unsafe_allow_html=True)
+
+if st.session_state.problema_activo:
+    prob = st.session_state.problema_activo
     
-    if st.session_state.problema_activo:
-        prob = st.session_state.problema_activo
+    st.markdown(f"#### 📄 Análisis del Problema")
+    st.info(f"**Enunciado:** {prob['enunciado']}\n\n**Función Objetivo:** $f(x) = {prob['funcion_latex']}$")
+    
+    st.markdown("### 🧠 Pistas y Tips de Resolución:")
+    st.markdown("""
+        <div class="tip-box">
+            <p style="margin-bottom: 10px;"><b>💡 Tip 1: Comprende el objetivo.</b><br>Estamos buscando los valores óptimos (máximos o mínimos) de la función en el intervalo de estudio.</p>
+            <p style="margin-bottom: 10px;"><b>💡 Tip 2: Deriva con cuidado.</b><br>Calcula la primera derivada $f'(x)$ aplicando las reglas básicas de derivación para conocer el ritmo de cambio.</p>
+            <p style="margin-bottom: 10px;"><b>💡 Tip 3: Halla los puntos críticos.</b><br>Iguala la primera derivada a cero ($f'(x) = 0$) y resuelve la ecuación para encontrar las posibles ubicaciones de los extremos.</p>
+            <p style="margin-bottom: 0px;"><b>💡 Tip 4: Aplica la segunda derivada.</b><br>Sustituye los puntos críticos en $f''(x)$. Si el resultado es menor que cero, es un máximo; si es mayor, es un mínimo.</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    if not st.session_state.mostrar_solucion:
+        if st.button("🔍 Ver Solución Paso a Paso Completa"):
+            st.session_state.mostrar_solucion = True
+            st.rerun()
+    else:
+        st.markdown("---")
+        st.markdown("### 📊 Solución Detallada Paso a Paso:")
+        st.markdown(prob['html_solucion'], unsafe_allow_html=True)
         
-        st.markdown(f"#### 📄 Análisis del Problema")
-        st.info(f"**Enunciado:** {prob['enunciado']}\n\n**Función Objetivo:** $f(x) = {prob['funcion_latex']}$")
-        
-        # Bloque de Tips de Resolución (Paso 1)
-        st.markdown("### 🧠 Pistas y Tips de Resolución:")
-        st.markdown("""
-            <div class="tip-box">
-                <p style="margin-bottom: 10px;"><b>💡 Tip 1: Comprende el objetivo.</b><br>Estamos buscando los valores óptimos (máximos o mínimos) de la función en el intervalo de estudio.</p>
-                <p style="margin-bottom: 10px;"><b>💡 Tip 2: Deriva con cuidado.</b><br>Calcula la primera derivada $f'(x)$ aplicando las reglas básicas de derivación para conocer el ritmo de cambio.</p>
-                <p style="margin-bottom: 10px;"><b>💡 Tip 3: Halla los puntos críticos.</b><br>Iguala la primera derivada a cero ($f'(x) = 0$) y resuelve la ecuación para encontrar las posibles ubicaciones de los extremos.</p>
-                <p style="margin-bottom: 0px;"><b>💡 Tip 4: Aplica la segunda derivada.</b><br>Sustituye los puntos críticos en $f''(x)$. Si el resultado es menor que cero, es un máximo; si es mayor, es un mínimo.</p>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        # Botón para desplegar el paso a paso completo
-        if not st.session_state.mostrar_solucion:
-            if st.button("🔍 Ver Solución Paso a Paso Completa"):
-                st.session_state.mostrar_solucion = True
-                st.rerun()
-        else:
-            st.markdown("---")
-            st.markdown("### 📊 Solución Detallada Paso a Paso:")
-            st.markdown(prob['html_solucion'], unsafe_allow_html=True)
+        if st.button("Ocultar solución"):
+            st.session_state.mostrar_solucion = False
+            st.rerun()
             
-            if st.button("Ocultar solución"):
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("⬅️ Analizar otro problema"):
+        st.session_state.problema_activo = None
+        st.session_state.mostrar_solucion = False
+        st.rerun()
+
+else:
+    st.markdown("""
+        <p style="color: #475569; font-size: 15px; margin-bottom: 20px;">Bienvenido al módulo de cálculo y optimización. Ingresa la función objetivo de tu problema para recibir guía analítica, pistas de razonamiento y el desglose paso a paso.</p>
+    """, unsafe_allow_html=True)
+    
+    enunciado_user = st.text_area("Enunciado o contexto del problema (Opcional):", placeholder="Ej: Determinar las dimensiones para maximizar el área...", height=90)
+    funcion_str = st.text_input("Función objetivo $f(x)$:", placeholder="Ej: 2x3 - 15x2 + 36*x")
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("⚡ Iniciar Análisis de Optimización", use_container_width=True):
+        if not funcion_str.strip():
+            st.warning("⚠️ Por favor ingresa una función matemática válida.")
+        else:
+            try:
+                funcion_saneada = limpiar_sintaxis_matematica(funcion_str)
+                f_expr = sp.sympify(funcion_saneada)
+                f_prime = sp.diff(f_expr, x)
+                f_double_prime = sp.diff(f_prime, x)
+                puntos_criticos = sp.solve(f_prime, x)
+                
+                html_paso_a_paso = f"""
+                <div class="step-box">
+                    <b>Paso 1: Cálculo de la primera derivada</b><br>
+                    Derivamos la función objetivo con respecto a $x$:<br>
+                    <code style="background: white; padding: 2px 6px; border-radius: 4px;">f'(x) = {sp.latex(f_prime)}</code><br><br>
+                    Igualamos a cero ($f'(x) = 0$) para hallar los puntos críticos.
+                </div>
+                """
+                
+                detalle_evaluacion = ""
+                if puntos_criticos:
+                    for pc in puntos_criticos:
+                        try:
+                            val_seg = float(f_double_prime.subs(x, pc).evalf())
+                            val_y = float(f_expr.subs(x, pc).evalf())
+                            x_num = float(pc.evalf())
+                            tipo_extremo = "máximo local" if val_seg < 0 else "mínimo local"
+                            signo_str = "< 0" if val_seg < 0 else "> 0"
+                            
+                            detalle_evaluacion += f"""
+                            <div style="background: white; padding: 10px; border-radius: 6px; margin-top: 8px; border: 1px solid #CBD5E1;">
+                                <b>• Para $x = {x_num:.2f}$:</b><br>
+                                Evaluamos en la segunda derivada: $f''({x_num:.2f}) = {val_seg:.2f}$ ({signo_str}).<br>
+                                Conclusión: Existe un <b>{tipo_extremo}</b>.<br>
+                                Valor óptimo en la función: $f({x_num:.2f}) = {val_y:.2f}$
+                            </div>
+                            """
+                        except:
+                            detalle_evaluacion += f"<div>Punto crítico en $x = {pc}$</div>"
+                else:
+                    detalle_evaluacion = "<div>No se encontraron puntos críticos reales.</div>"
+                
+                html_paso_a_paso += f"""
+                <div class="step-box">
+                    <b>Paso 2: Cálculo de la segunda derivada</b><br>
+                    Obtenemos $f''(x)$ para aplicar el criterio de concavidad:<br>
+                    <code style="background: white; padding: 2px 6px; border-radius: 4px;">f''(x) = {sp.latex(f_double_prime)}</code>
+                </div>
+                <div class="step-box">
+                    <b>Paso 3: Evaluación y clasificación de extremos</b>
+                    {detalle_evaluacion}
+                </div>
+                """
+                
+                nuevo_item = {
+                    "titulo": enunciado_user[:25] if enunciado_user else f"Función: {funcion_str[:15]}",
+                    "enunciado": enunciado_user if enunciado_user else "Análisis de optimización directa.",
+                    "funcion_latex": sp.latex(f_expr),
+                    "html_solucion": html_paso_a_paso
+                }
+                st.session_state.historial_problemas.append(nuevo_item)
+                st.session_state.problema_activo = nuevo_item
                 st.session_state.mostrar_solucion = False
                 st.rerun()
                 
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("⬅️ Analizar otro problema"):
-            st.session_state.problema_activo = None
+            except Exception as e:
+                st.error(f"⚠️ Error al interpretar la función. Revisa la sintaxis. Detalle: {e}")
+
+st.markdown('</div>', unsafe_allow_html=True) # Cierra uis-body
+st.markdown('</div>', unsafe_allow_html=True) # Cierra main-containerimport streamlit as st
+import sympy as sp
+import re
+
+# Configuración de la página
+st.set_page_config(
+    page_title="Asistente UIS - Optimización de Una Variable",
+    page_icon="📐",
+    layout="centered"
+)
+
+# --- ESTILOS CSS CORREGIDOS Y UNIFICADOS ---
+st.markdown("""
+    <style>
+    .stApp {
+        background-color: #F4F7F5;
+        color: #1E293B;
+    }
+    /* Contenedor maestro unificado para evitar huecos raros */
+    .main-container {
+        background-color: #FFFFFF;
+        border-radius: 12px;
+        border: 1px solid #E2E8F0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+    /* Cabecera integrada */
+    .uis-header {
+        background-color: #007A33;
+        color: white;
+        padding: 22px 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    /* Cuerpo interno de la tarjeta */
+    .uis-body {
+        padding: 25px;
+    }
+    /* Burbujas y cajas de pasos */
+    .tip-box {
+        background-color: #E2F6EC;
+        border-left: 5px solid #007A33;
+        padding: 16px;
+        border-radius: 0 8px 8px 0;
+        margin: 15px 0;
+        color: #1E293B;
+    }
+    .step-box {
+        background-color: #F8FAF9;
+        border: 1px solid #CBD5E1;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+    }
+    .stButton > button {
+        background-color: #007A33;
+        color: white;
+        border-radius: 8px;
+        border: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+    }
+    .stButton > button:hover {
+        background-color: #005E27;
+        color: white;
+    }
+    .stTextInput input, .stTextArea textarea {
+        background-color: #FFFFFF !important;
+        color: #1E293B !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 8px !important;
+    }
+    .stTextInput label, .stTextArea label {
+        color: #1E293B !important;
+        font-weight: 500;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Función para corregir sintaxis matemática de forma segura
+def limpiar_sintaxis_matematica(expresion: str) -> str:
+    exp = expresion.replace("^", "**")
+    exp = re.sub(r'([a-zA-Z])(\d+)', r'\1**\2', exp)
+    exp = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', exp)
+    return exp
+
+# Inicializar estados de sesión
+if "historial_problemas" not in st.session_state:
+    st.session_state.historial_problemas = []
+if "problema_activo" not in st.session_state:
+    st.session_state.problema_activo = None
+if "mostrar_solucion" not in st.session_state:
+    st.session_state.mostrar_solucion = False
+
+# --- BARRA LATERAL ---
+with st.sidebar:
+    try:
+        st.image("logo_uis.webp", use_container_width=True)
+    except:
+        st.info("💡 Sube tu 'logo_uis.webp' al directorio para ver el escudo.")
+        
+    st.markdown("### 📐 Casos de Optimización")
+    if st.button("➕ Nuevo Problema", use_container_width=True):
+        st.session_state.problema_activo = None
+        st.session_state.mostrar_solucion = False
+        st.rerun()
+        
+    st.markdown("---")
+    st.markdown("<p style='font-size: 12px; color: #64748B; font-weight: 600;'>HISTORIAL RECIENTE</p>", unsafe_allow_html=True)
+    
+    if st.session_state.historial_problemas:
+        for idx, item in enumerate(reversed(st.session_state.historial_problemas)):
+            if st.button(f"📌 {item['titulo'][:22]}...", key=f"hist_{idx}", use_container_width=True):
+                st.session_state.problema_activo = item
+                st.session_state.mostrar_solucion = False
+                st.rerun()
+    else:
+        st.markdown("<p style='font-size: 13px; color: #94A3B8;'>Sin registros previos.</p>", unsafe_allow_html=True)
+        
+    st.markdown("---")
+    st.caption("Universidad Industrial de Santander\nSede Barrancabermeja")
+
+x = sp.Symbol('x', real=True)
+
+# --- ESTRUCTURA MAESTRA UNIFICADA ---
+st.markdown('<div class="main-container">', unsafe_allow_html=True)
+
+# Cabecera dentro del contenedor unificado
+st.markdown("""
+    <div class="uis-header">
+        <div>
+            <h3 style="margin: 0; color: white; font-size: 20px;">Asistente de Optimización - UIS</h3>
+            <span style="font-size: 13px; color: #E2F6EC;">Ingeniería en Inteligencia Artificial</span>
+        </div>
+        <span style="background-color: #005E27; padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; color: white;">Académico</span>
+    </div>
+""", unsafe_allow_html=True)
+
+# Cuerpo de la tarjeta
+st.markdown('<div class="uis-body">', unsafe_allow_html=True)
+
+if st.session_state.problema_activo:
+    prob = st.session_state.problema_activo
+    
+    st.markdown(f"#### 📄 Análisis del Problema")
+    st.info(f"**Enunciado:** {prob['enunciado']}\n\n**Función Objetivo:** $f(x) = {prob['funcion_latex']}$")
+    
+    st.markdown("### 🧠 Pistas y Tips de Resolución:")
+    st.markdown("""
+        <div class="tip-box">
+            <p style="margin-bottom: 10px;"><b>💡 Tip 1: Comprende el objetivo.</b><br>Estamos buscando los valores óptimos (máximos o mínimos) de la función en el intervalo de estudio.</p>
+            <p style="margin-bottom: 10px;"><b>💡 Tip 2: Deriva con cuidado.</b><br>Calcula la primera derivada $f'(x)$ aplicando las reglas básicas de derivación para conocer el ritmo de cambio.</p>
+            <p style="margin-bottom: 10px;"><b>💡 Tip 3: Halla los puntos críticos.</b><br>Iguala la primera derivada a cero ($f'(x) = 0$) y resuelve la ecuación para encontrar las posibles ubicaciones de los extremos.</p>
+            <p style="margin-bottom: 0px;"><b>💡 Tip 4: Aplica la segunda derivada.</b><br>Sustituye los puntos críticos en $f''(x)$. Si el resultado es menor que cero, es un máximo; si es mayor, es un mínimo.</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    if not st.session_state.mostrar_solucion:
+        if st.button("🔍 Ver Solución Paso a Paso Completa"):
+            st.session_state.mostrar_solucion = True
+            st.rerun()
+    else:
+        st.markdown("---")
+        st.markdown("### 📊 Solución Detallada Paso a Paso:")
+        st.markdown(prob['html_solucion'], unsafe_allow_html=True)
+        
+        if st.button("Ocultar solución"):
             st.session_state.mostrar_solucion = False
             st.rerun()
+            
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("⬅️ Analizar otro problema"):
+        st.session_state.problema_activo = None
+        st.session_state.mostrar_solucion = False
+        st.rerun()
 
-    else:
-        st.markdown("""
-            <p style="color: #475569; font-size: 15px;">Bienvenido al módulo de cálculo y optimización. Ingresa la función objetivo de tu problema para recibir guía analítica, pistas de razonamiento y el desglose paso a paso.</p>
-        """, unsafe_allow_html=True)
-        
-        enunciado_user = st.text_area("Enunciado o contexto del problema (Opcional):", placeholder="Ej: Determinar las dimensiones para maximizar el área...", height=90)
-        funcion_str = st.text_input("Función objetivo $f(x)$:", placeholder="Ej: 2x3 - 15x2 + 36*x")
-        
-        if st.button("⚡ Iniciar Análisis de Optimización", use_container_width=True):
-            if not funcion_str.strip():
-                st.warning("⚠️ Por favor ingresa una función matemática válida.")
-            else:
-                try:
-                    funcion_saneada = limpiar_sintaxis_matematica(funcion_str)
-                    f_expr = sp.sympify(funcion_saneada)
-                    f_prime = sp.diff(f_expr, x)
-                    f_double_prime = sp.diff(f_prime, x)
-                    puntos_criticos = sp.solve(f_prime, x)
-                    
-                    # Generar HTML del paso a paso estructurado
-                    html_paso_a_paso = f"""
-                    <div class="step-box">
-                        <b>Paso 1: Cálculo de la primera derivada</b><br>
-                        Derivamos la función objetivo con respecto a $x$:<br>
-                        <code style="background: white; padding: 2px 6px; border-radius: 4px;">f'(x) = {sp.latex(f_prime)}</code><br><br>
-                        Igualamos a cero ($f'(x) = 0$) para hallar los puntos críticos.
-                    </div>
-                    """
-                    
-                    detalle_evaluacion = ""
-                    if puntos_criticos:
-                        for pc in puntos_criticos:
-                            try:
-                                val_seg = float(f_double_prime.subs(x, pc).evalf())
-                                val_y = float(f_expr.subs(x, pc).evalf())
-                                x_num = float(pc.evalf())
-                                tipo_extremo = "máximo local" if val_seg < 0 else "mínimo local"
-                                signo_str = "< 0" if val_seg < 0 else "> 0"
-                                
-                                detalle_evaluacion += f"""
-                                <div style="background: white; padding: 10px; border-radius: 6px; margin-top: 8px; border: 1px solid #CBD5E1;">
-                                    <b>• Para $x = {x_num:.2f}$:</b><br>
-                                    Evaluamos en la segunda derivada: $f''({x_num:.2f}) = {val_seg:.2f}$ ({signo_str}).<br>
-                                    Conclusión: Existe un <b>{tipo_extremo}</b>.<br>
-                                    Valor óptimo en la función: $f({x_num:.2f}) = {val_y:.2f}$
-                                </div>
-                                """
-                            except:
-                                detalle_evaluacion += f"<div>Punto crítico en $x = {pc}$</div>"
-                    else:
-                        detalle_evaluacion = "<div>No se encontraron puntos críticos reales.</div>"
-                    
-                    html_paso_a_paso += f"""
-                    <div class="step-box">
-                        <b>Paso 2: Cálculo de la segunda derivada</b><br>
-                        Obtenemos $f''(x)$ para aplicar el criterio de concavidad:<br>
-                        <code style="background: white; padding: 2px 6px; border-radius: 4px;">f''(x) = {sp.latex(f_double_prime)}</code>
-                    </div>
-                    <div class="step-box">
-                        <b>Paso 3: Evaluación y clasificación de extremos</b>
-                        {detalle_evaluacion}
-                    </div>
-                    """
-                    
-                    nuevo_item = {
-                        "titulo": enunciado_user[:25] if enunciado_user else f"Función: {funcion_str[:15]}",
-                        "enunciado": enunciado_user if enunciado_user else "Análisis de optimización directa.",
-                        "funcion_latex": sp.latex(f_expr),
-                        "html_solucion": html_paso_a_paso
-                    }
-                    st.session_state.historial_problemas.append(nuevo_item)
-                    st.session_state.problema_activo = nuevo_item
-                    st.session_state.mostrar_solucion = False
-                    st.rerun()
-                    
-                except Exception as e:
-                    st.error(f"⚠️ Error al interpretar la función. Revisa la sintaxis. Detalle: {e}")
+else:
+    st.markdown("""
+        <p style="color: #475569; font-size: 15px; margin-bottom: 20px;">Bienvenido al módulo de cálculo y optimización. Ingresa la función objetivo de tu problema para recibir guía analítica, pistas de razonamiento y el desglose paso a paso.</p>
+    """, unsafe_allow_html=True)
+    
+    enunciado_user = st.text_area("Enunciado o contexto del problema (Opcional):", placeholder="Ej: Determinar las dimensiones para maximizar el área...", height=90)
+    funcion_str = st.text_input("Función objetivo $f(x)$:", placeholder="Ej: 2x3 - 15x2 + 36*x")
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("⚡ Iniciar Análisis de Optimización", use_container_width=True):
+        if not funcion_str.strip():
+            st.warning("⚠️ Por favor ingresa una función matemática válida.")
+        else:
+            try:
+                funcion_saneada = limpiar_sintaxis_matematica(funcion_str)
+                f_expr = sp.sympify(funcion_saneada)
+                f_prime = sp.diff(f_expr, x)
+                f_double_prime = sp.diff(f_prime, x)
+                puntos_criticos = sp.solve(f_prime, x)
+                
+                html_paso_a_paso = f"""
+                <div class="step-box">
+                    <b>Paso 1: Cálculo de la primera derivada</b><br>
+                    Derivamos la función objetivo con respecto a $x$:<br>
+                    <code style="background: white; padding: 2px 6px; border-radius: 4px;">f'(x) = {sp.latex(f_prime)}</code><br><br>
+                    Igualamos a cero ($f'(x) = 0$) para hallar los puntos críticos.
+                </div>
+                """
+                
+                detalle_evaluacion = ""
+                if puntos_criticos:
+                    for pc in puntos_criticos:
+                        try:
+                            val_seg = float(f_double_prime.subs(x, pc).evalf())
+                            val_y = float(f_expr.subs(x, pc).evalf())
+                            x_num = float(pc.evalf())
+                            tipo_extremo = "máximo local" if val_seg < 0 else "mínimo local"
+                            signo_str = "< 0" if val_seg < 0 else "> 0"
+                            
+                            detalle_evaluacion += f"""
+                            <div style="background: white; padding: 10px; border-radius: 6px; margin-top: 8px; border: 1px solid #CBD5E1;">
+                                <b>• Para $x = {x_num:.2f}$:</b><br>
+                                Evaluamos en la segunda derivada: $f''({x_num:.2f}) = {val_seg:.2f}$ ({signo_str}).<br>
+                                Conclusión: Existe un <b>{tipo_extremo}</b>.<br>
+                                Valor óptimo en la función: $f({x_num:.2f}) = {val_y:.2f}$
+                            </div>
+                            """
+                        except:
+                            detalle_evaluacion += f"<div>Punto crítico en $x = {pc}$</div>"
+                else:
+                    detalle_evaluacion = "<div>No se encontraron puntos críticos reales.</div>"
+                
+                html_paso_a_paso += f"""
+                <div class="step-box">
+                    <b>Paso 2: Cálculo de la segunda derivada</b><br>
+                    Obtenemos $f''(x)$ para aplicar el criterio de concavidad:<br>
+                    <code style="background: white; padding: 2px 6px; border-radius: 4px;">f''(x) = {sp.latex(f_double_prime)}</code>
+                </div>
+                <div class="step-box">
+                    <b>Paso 3: Evaluación y clasificación de extremos</b>
+                    {detalle_evaluacion}
+                </div>
+                """
+                
+                nuevo_item = {
+                    "titulo": enunciado_user[:25] if enunciado_user else f"Función: {funcion_str[:15]}",
+                    "enunciado": enunciado_user if enunciado_user else "Análisis de optimización directa.",
+                    "funcion_latex": sp.latex(f_expr),
+                    "html_solucion": html_paso_a_paso
+                }
+                st.session_state.historial_problemas.append(nuevo_item)
+                st.session_state.problema_activo = nuevo_item
+                st.session_state.mostrar_solucion = False
+                st.rerun()
+                
+            except Exception as e:
+                st.error(f"⚠️ Error al interpretar la función. Revisa la sintaxis. Detalle: {e}")
 
-    st.markdown('</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True) # Cierra uis-body
+st.markdown('</div>', unsafe_allow_html=True) # Cierra main-container
