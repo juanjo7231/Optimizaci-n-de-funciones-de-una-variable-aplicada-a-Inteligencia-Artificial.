@@ -10,7 +10,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILOS CSS CORREGIDOS ---
+# --- ESTILOS CSS CORREGIDOS (TEXTO DE ENTRADA VISIBLE) ---
 st.markdown("""
     <style>
     .stApp {
@@ -23,8 +23,13 @@ st.markdown("""
     .stChatMessage p, .stChatMessage span, .stChatMessage div {
         color: #1E293B !important;
     }
-    .stChatInput input {
+    /* Estilos robustos para el input del chat */
+    .stChatInput textarea, .stChatInput input {
         color: #1E293B !important;
+        background-color: #FFFFFF !important;
+        -webkit-text-fill-color: #1E293B !important;
+    }
+    div[data-baseweb="input"], div[data-baseweb="base-input"], div[data-baseweb="textarea"] {
         background-color: #FFFFFF !important;
     }
     .uis-header {
