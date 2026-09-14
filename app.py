@@ -245,9 +245,9 @@ if st.session_state.problema_activo:
 
 else:
     with st.chat_message("assistant", avatar="🧠"):
-        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función en una sola variable quieres que analicemos hoy?")
+        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función en una sola variable quieres que analizemos hoy?")
     
-    user_input = st.chat_input("Ej: x^3 - 3*x o -x^2 + 4*x")
+    user_input = st.chat_input("Coloca tu función en una sola variable...")
     
     if user_input:
         if "x" not in user_input.lower():
