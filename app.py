@@ -35,13 +35,15 @@ st.markdown("""
     .uis-body {
         padding: 25px;
     }
-    .tip-box {
+    .tip-box-clean {
         background-color: #E2F6EC;
         border-left: 5px solid #007A33;
-        padding: 16px;
+        padding: 18px 20px;
         border-radius: 0 8px 8px 0;
         margin: 15px 0;
         color: #1E293B;
+        font-size: 14.5px;
+        line-height: 1.5;
     }
     .stButton > button {
         background-color: #007A33;
@@ -139,31 +141,27 @@ if st.session_state.problema_activo:
     
     st.markdown("### 🧠 Pistas y Tips Personalizados para este Ejercicio:")
     
-    # En lugar de meter HTML plano que rompe las fórmulas, usamos un contenedor de Streamlit y Markdown normal
-    with st.container():
-        st.markdown("""
-            <style>
-            .tip-box-clean {
-                background-color: #E2F6EC;
-                border-left: 5px solid #007A33;
-                padding: 16px;
-                border-radius: 0 8px 8px 0;
-                margin: 15px 0;
-                color: #1E293B;
-            }
-            </style>
-        """, unsafe_allow_html=True)
-        
-        st.markdown('<div class="tip-box-clean">', unsafe_allow_html=True)
-        st.markdown(f"**💡 Tip 1: Naturaleza de la función.**  \nEstamos analizando una expresión algebraica. Su comportamiento nos dirá dónde se encuentran los puntos óptimos.")
-        st.markdown(f"**💡 Tip 2: Derivación analítica.**  \nAl calcular la primera derivada obtenemos:")
-        st.latex(f"f'(x) = {prob['f_prime_latex']}")
-        st.markdown(f"**💡 Tip 3: Búsqueda del punto crítico.**  \nIgualando $f'(x) = 0$, buscamos los valores de $x$ donde la pendiente se anula.")
-        st.markdown(f"**💡 Tip 4: Criterio de concavidad.**  \nLa segunda derivada evaluada nos revelará la curvatura a través de:")
-        st.latex(f"f''(x) = {prob['f_double_prime_latex']}")
-        st.markdown('</div>', unsafe_allow_html=True)
+    # Renderizamos todo el contenido de los tips dentro de un único bloque HTML unificado
+    st.markdown(f"""
+        <div class="tip-box-clean">
+            <p style="margin-bottom: 12px;"><b>💡 Tip 1: Naturaleza de la función.</b><br>Estamos analizando una expresión algebraica en términos de <i>x</i>. Su comportamiento nos dirá dónde se encuentran los puntos óptimos.</p>
+            <p style="margin-bottom: 6px;"><b>💡 Tip 2: Derivación analítica.</b><br>Al calcular la primera derivada obtenemos la tasa de cambio:</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.latex(f"f'(x) = {prob['f_prime_latex']}")
+    
+    st.markdown(f"""
+        <div class="tip-box-clean">
+            <p style="margin-bottom: 12px;"><b>💡 Tip 3: Búsqueda del punto crítico.</b><br>Igualando <i>f'(x) = 0</i>, buscamos los valores donde la pendiente se anula.</p>
+            <p style="margin-bottom: 6px;"><b>💡 Tip 4: Criterio de concavidad.</b><br>La segunda derivada evaluada nos revelará la curvatura a través de:</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.latex(f"f''(x) = {prob['f_double_prime_latex']}")
     
     if not st.session_state.mostrar_solucion:
+        st.markdown("<br>", unsafe_allow_html=True)
         if st.button("🔍 Ver Solución Paso a Paso Completa"):
             st.session_state.mostrar_solucion = True
             st.rerun()
