@@ -191,8 +191,8 @@ else:
                 funcion_saneada = limpiar_sintaxis_matematica(funcion_str)
                 f_expr = sp.sympify(funcion_saneada)
                 
-                # Validar que contenga la variable x
-                if x not in f_expr.free_symbols:
+                # Validación segura basada en el nombre de la variable
+                if not any(s.name == 'x' for s in f_expr.free_symbols):
                     st.error("⚠️ La expresión ingresada no contiene la variable 'x'. Asegúrate de escribirla correctamente.")
                 else:
                     f_prime = sp.diff(f_expr, x)
