@@ -70,15 +70,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def limpiar_sintaxis_matematica(expresion: str) -> str:
-    # Cambiar ^ por potenciación de python
     exp = expresion.replace("^", "**")
-    # Manejar multiplicación implícita antes de un paréntesis: x( o 2( o )( -> x*( o 2*( o )*(
     exp = re.sub(r'([a-zA-Z0-9\)])\(', r'\1*(', exp)
-    # Manejar multiplicación implícita después de un paréntesis: )x o )2 -> )*x or )*2
     exp = re.sub(r'\)([a-zA-Z0-9])', r')*\1', exp)
-    # Número seguido de letra: 2x -> 2*x
     exp = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', exp)
-    # Letra seguida de número (si aplica): x2 -> x**2
     exp = re.sub(r'([a-zA-Z])(\d+)', r'\1**\2', exp)
     return exp
 
@@ -220,7 +215,6 @@ else:
                     })
                     
                     if puntos_criticos:
-                        # Filtramos solo raíces reales si es posible, o tomamos la primera real
                         pc_real = None
                         for pc in puntos_criticos:
                             if pc.is_real:
@@ -279,4 +273,4 @@ else:
                 st.error(f"⚠️ Error al interpretar la función. Revisa la sintaxis. Detalle: {e}")
 
 st.markdown('</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_app_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
