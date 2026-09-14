@@ -1,5 +1,6 @@
 import streamlit as st
 import sympy as sp
+import re
 
 # Configuración de la página
 st.set_page_config(
@@ -8,22 +9,17 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- ESTILOS CSS PERSONALIZADOS (Corrección de temas y diseño UI limpio) ---
+# --- ESTILOS CSS PERSONALIZADOS ---
 st.markdown("""
     <style>
-    /* Forzar un esquema limpio y claro en toda la app */
     .stApp {
         background-color: #F8FAF9;
         color: #1E293B;
     }
-    
-    /* Barra lateral limpia */
     [data-testid="stSidebar"] {
         background-color: #FFFFFF;
         border-right: 1px solid #E2E8F0;
     }
-    
-    /* Botones principales estilo UI (Verde UIS) */
     .stButton > button {
         background-color: #007A33;
         color: white;
@@ -37,27 +33,19 @@ st.markdown("""
         background-color: #005E27;
         color: white;
     }
-    
-    /* Asegurar visibilidad perfecta en inputs de texto y áreas de texto */
     .stTextInput input, .stTextArea textarea {
         background-color: #FFFFFF !important;
         color: #1E293B !important;
         border: 1px solid #CBD5E1 !important;
         border-radius: 8px !important;
     }
-    
-    /* Etiquetas de los inputs visibles y oscuras */
     .stTextInput label, .stTextArea label, .stSelectbox label {
         color: #1E293B !important;
         font-weight: 500;
     }
-    
-    /* Títulos institucionales */
     h1, h2, h3 {
         color: #004D20 !important;
     }
-    
-    /* Tarjeta de bienvenida central */
     .chat-welcome-card {
         background-color: #FFFFFF;
         padding: 2.5rem;
@@ -70,7 +58,17 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Inicializar estados de la sesión si no existen
+# Función para corregir automáticamente sintaxis común (ej: 2x3 -> 2*x**3, 15x2 -> 15*x**2)
+def limpiar_sintaxis_matematica(expresion: str) -> str:
+    # Reemplazar potencias implícitas tipo x3 por x**3 o 2x3 por 2*x**3
+    exp = expresion.replace("^", "**")
+    # Insertar ** antes de los exponentes numéricos si están pegados a letras (ej: x3 -> x**3)
+    exp = re.sub(r'([a-zA-Z])(\d+)', r'\1**\2', exp)
+    # Insertar * entre números y letras pegadas (ej: 2x -> 2*x, 15x**2 -> 15*x**2)
+    exp = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', exp)
+    return exp
+
+# Inicializar estados de la sesión
 if "historial_problemas" not in st.session_state:
     st.session_state.historial_problemas = []
 if "problema_activo" not in st.session_state:
@@ -81,7 +79,7 @@ with st.sidebar:
     try:
         st.image("logo_uis.webp", use_container_width=True)
     except:
-        st.info("💡 Consejo: Sube un archivo 'logo_uis.webp' al repositorio para ver el escudo.")
+        st.info("💡 Sube un archivo 'logo_uis.webp' al directorio para ver el escudo oficial.")
         
     st.markdown("### 💬 Conversaciones")
     
@@ -92,7 +90,6 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("<p style='font-size: 12px; color: #64748B; font-weight: 600;'>HISTORIAL RECIENTE</p>", unsafe_allow_html=True)
     
-    # Mostrar historial de consultas guardadas en la sesión
     if st.session_state.historial_problemas:
         for idx, item in enumerate(reversed(st.session_state.historial_problemas)):
             if st.button(f"📌 {item['titulo'][:22]}...", key=f"hist_{idx}", use_container_width=True):
@@ -109,8 +106,6 @@ with st.sidebar:
 x = sp.Symbol('x', real=True)
 
 # --- CUERPO PRINCIPAL ---
-
-# Cabecera superior
 col_head1, col_head2 = st.columns([6, 1])
 with col_head1:
     st.markdown("### 🤖 Asistente IA - Optimización de Una Variable")
@@ -119,7 +114,6 @@ with col_head2:
 
 st.markdown("---")
 
-# Si hay un problema activo seleccionado del historial
 if st.session_state.problema_activo:
     prob = st.session_state.problema_activo
     st.markdown(f"#### 📄 Análisis: {prob['titulo']}")
@@ -138,18 +132,16 @@ if st.session_state.problema_activo:
         st.rerun()
 
 else:
-    # Tarjeta de bienvenida central estilo UI moderna
     st.markdown("""
         <div class="chat-welcome-card">
             <h2>¿Qué problema vamos a resolver hoy?</h2>
-            <p style="color: #64748B; font-size: 15px;">Ingresa el enunciado y la función matemática de tu problema de optimización. La IA se encargará de derivar, tabular puntos críticos y darte el resultado analítico paso a paso.</p>
+            <p style="color: #64748B; font-size: 15px;">Ingresa tu función (ej: <code>2x3 - 15x2 + 36x</code>). La IA se encarga de adaptarla, derivar, hallar puntos críticos y darte el resultado paso a paso.</p>
         </div>
     """, unsafe_allow_html=True)
 
-    # Contenedor de entrada
     st.markdown("#### ✍️ Planta tu caso de estudio:")
-    enunciado_user = st.text_area("Enunciado o descripción del problema:", placeholder="Ej: Encontrar las dimensiones de un rectángulo de área máxima con 100m de cerca...", height=100)
-    funcion_str = st.text_input("Función objetivo $f(x)$ (Usa `**` para potencias y `*` para multiplicar):", placeholder="Ej: x*(100 - 2*x)")
+    enunciado_user = st.text_area("Enunciado o descripción del problema:", placeholder="Ej: Maximizar la función de costos...", height=100)
+    funcion_str = st.text_input("Función objetivo $f(x)$:", placeholder="Ej: 2x3 - 15x2 + 36*x")
     
     col_btn1, col_btn2 = st.columns([1, 4])
     with col_btn1:
@@ -160,7 +152,9 @@ else:
             st.warning("⚠️ Por favor ingresa una función matemática válida.")
         else:
             try:
-                f_expr = sp.sympify(funcion_str)
+                # Limpiar y parsear automáticamente la sintaxis natural del usuario
+                funcion_saneada = limpiar_sintaxis_matematica(funcion_str)
+                f_expr = sp.sympify(funcion_saneada)
                 f_prime = sp.diff(f_expr, x)
                 f_double_prime = sp.diff(f_prime, x)
                 puntos_criticos = sp.solve(f_prime, x)
@@ -179,7 +173,7 @@ else:
                 
                 res_texto_guardado = ""
                 if puntos_criticos:
-                    st.write("**4. Puntos Críticos y Criterio:**")
+                    st.write("**4. Puntos Críticos y Criterio de la Segunda Derivada:**")
                     for pc in puntos_criticos:
                         st.latex(f"x = {sp.latex(pc)}")
                         try:
@@ -188,15 +182,15 @@ else:
                             x_num = float(pc.evalf())
                             
                             if val_seg < 0:
-                                msg = f"✅ **MÁXIMO LOCAL** hallado en $x \\approx {x_num:.4f}$, con un valor óptimo de $f(x) = {val_y:.4f}$ (Segunda derivada negativa: {val_seg:.2f})."
+                                msg = f"✅ **MÁXIMO LOCAL** hallado en $x \\approx {x_num:.4f}$, con un valor de $f(x) = {val_y:.4f}$ (Segunda derivada negativa: {val_seg:.2f} < 0)."
                                 st.success(msg)
                                 res_texto_guardado += f"<br>{msg}"
                             elif val_seg > 0:
-                                msg = f"✅ **MÍNIMO LOCAL** hallado en $x \\approx {x_num:.4f}$, con un valor óptimo de $f(x) = {val_y:.4f}$ (Segunda derivada positiva: {val_seg:.2f})."
+                                msg = f"✅ **MÍNIMO LOCAL** hallado en $x \\approx {x_num:.4f}$, con un valor de $f(x) = {val_y:.4f}$ (Segunda derivada positiva: {val_seg:.2f} > 0)."
                                 st.success(msg)
                                 res_texto_guardado += f"<br>{msg}"
                             else:
-                                msg = f"⚠️ En $x = {pc}$, la segunda derivada es cero; no es concluyente."
+                                msg = f"⚠️ En $x = {pc}$, la segunda derivada es cero; el criterio no es concluyente."
                                 st.warning(msg)
                                 res_texto_guardado += f"<br>{msg}"
                         except:
@@ -212,6 +206,7 @@ else:
                     "titulo": enunciado_user[:30] if enunciado_user else f"Función: {funcion_str[:20]}",
                     "enunciado": enunciado_user if enunciado_user else "Sin enunciado redactado.",
                     "f_latex": sp.latex(f_expr),
+                    "f_prime_laser": sp.latex(f_prime),
                     "f_prime_latex": sp.latex(f_prime),
                     "f_double_latex": sp.latex(f_double_prime),
                     "resultado_texto": res_texto_guardado
