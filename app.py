@@ -77,20 +77,6 @@ def limpiar_sintaxis_matematica(expresion: str) -> str:
     exp = re.sub(r'([a-zA-Z])(\d+)', r'\1**\2', exp)
     return exp
 
-def generar_pistas_contextuales(f_expr, f_prime, f_double_prime):
-    # Genera tips basados en las características matemáticas de la función analizada
-    pistas = []
-    
-    pistas.append(f"<b>💡 Tip 1: Naturaleza de la función.</b><br>Estamos analizando una expresión de tipo algebraico en términos de $x$. Su comportamiento nos dirá dónde se encuentran los puntos de máxima ganancia o área.")
-    
-    pistas.append(f"<b>💡 Tip 2: Derivación analítica.</b><br>Al calcular la primera derivada obtenemos $f'(x) = {sp.latex(f_prime)}$. Esta expresión representa la tasa de cambio instantánea.")
-    
-    pistas.append(f"<b>💡 Tip 3: Búsqueda del punto crítico.</b><br>Igualando $f'(x) = 0$, buscamos los valores de $x$ donde la pendiente se anula, indicando un posible cambio de tendencia o valor extremo.")
-    
-    pistas.append(f"<b>💡 Tip 4: Criterio de concavidad.</b><br>La segunda derivada $f''(x) = {sp.latex(f_double_prime)}$ nos revelará la curvatura: si resulta negativa en el punto crítico, sabremos que se trata de un máximo absoluto.")
-    
-    return pistas
-
 if "historial_problemas" not in st.session_state:
     st.session_state.historial_problemas = []
 if "problema_activo" not in st.session_state:
@@ -151,16 +137,15 @@ if st.session_state.problema_activo:
     st.markdown("**Función Objetivo:**")
     st.latex(f"f(x) = {prob['funcion_latex']}")
     
-    st.markdown("### 🧠 Pistas y Tips Personalizados para este Ejercicio:")
-    
-    # Construcción dinámica de la caja de pistas basada en el problema activo
-    tips_html = '<div class="tip-box">'
-    for i, tip_texto in enumerate(prob['pistas_dinamicas']):
-        margin_bottom = "8px" if i < len(prob['pistas_dinamicas']) - 1 else "0px"
-        tips_html += f'<p style="margin-bottom: {margin_bottom};">{tip_texto}</p>'
-    tips_html += '</div>'
-    
-    st.markdown(tips_html, unsafe_allow_html=True)
+    st.markdown("### 🧠 Pistas y Tips de Resolución:")
+    st.markdown("""
+        <div class="tip-box">
+            <p style="margin-bottom: 8px;"><b>💡 Tip 1: Comprende el objetivo.</b><br>Buscamos los valores óptimos (máximos o mínimos) analizando el comportamiento de la función.</p>
+            <p style="margin-bottom: 8px;"><b>💡 Tip 2: Deriva con cuidado.</b><br>Calcula la primera derivada f'(x) para conocer la tasa de cambio.</p>
+            <p style="margin-bottom: 8px;"><b>💡 Tip 3: Halla los puntos críticos.</b><br>Iguala f'(x) = 0 y despeja x para encontrar los posibles extremos.</p>
+            <p style="margin-bottom: 0px;"><b>💡 Tip 4: Criterio de la segunda derivada.</b><br>Sustituye los puntos críticos en f''(x) para clasificarlos.</p>
+        </div>
+    """, unsafe_allow_html=True)
     
     if not st.session_state.mostrar_solucion:
         if st.button("🔍 Ver Solución Paso a Paso Completa"):
@@ -191,7 +176,7 @@ if st.session_state.problema_activo:
 
 else:
     st.markdown("""
-        <p style="color: #475569; font-size: 15px; margin-bottom: 20px;">Bienvenido al módulo de cálculo y optimización. Ingresa la función objetivo de tu problema expresada en función de <b>x</b> para recibir guía analítica, pistas personalizadas y el desglose paso a paso.</p>
+        <p style="color: #475569; font-size: 15px; margin-bottom: 20px;">Bienvenido al módulo de cálculo y optimización. Ingresa la función objetivo de tu problema expresada en función de <b>x</b> para recibir guía analítica, pistas y el desglose paso a paso.</p>
     """, unsafe_allow_html=True)
     
     enunciado_user = st.text_area("Enunciado o contexto del problema (Opcional):", placeholder="Ej: Determinar las dimensiones para maximizar el área...", height=90)
@@ -214,9 +199,6 @@ else:
                     f_prime = sp.diff(f_expr, x)
                     f_double_prime = sp.diff(f_prime, x)
                     puntos_criticos = sp.solve(f_prime, x)
-                    
-                    # Generar pistas basadas estrictamente en este cálculo
-                    pistas_generadas = generar_pistas_contextuales(f_expr, f_prime, f_double_prime)
                     
                     pasos_narrativos = []
                     
@@ -280,7 +262,6 @@ else:
                         "titulo": enunciado_user[:25] if enunciado_user else f"Función: {funcion_str[:15]}",
                         "enunciado": enunciado_user if enunciado_user else "Análisis de optimización directa.",
                         "funcion_latex": sp.latex(f_expr),
-                        "pistas_dinamicas": pistas_generadas,
                         "pasos_narrativos": pasos_narrativos
                     }
                     st.session_state.historial_problemas.append(nuevo_item)
