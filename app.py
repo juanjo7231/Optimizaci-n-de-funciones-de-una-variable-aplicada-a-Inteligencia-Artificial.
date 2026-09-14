@@ -55,22 +55,29 @@ st.markdown("""
         text-align: center;
         margin-bottom: 2rem;
     }
-    .tip-card {
+    .tip-box {
         background-color: #E2F6EC;
         border-left: 5px solid #007A33;
-        padding: 1.2rem;
-        border-radius: 0 8px 8px 0;
-        margin-bottom: 1rem;
+        padding: 1.5rem;
+        border-radius: 0 12px 12px 0;
+        margin-bottom: 1.5rem;
+        color: #1E293B;
+    }
+    .step-box {
+        background-color: #FFFFFF;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid #E2E8F0;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Función segura para limpiar la sintaxis matemática sin dañar operadores
+# Función para corregir sintaxis matemática de forma segura
 def limpiar_sintaxis_matematica(expresion: str) -> str:
     exp = expresion.replace("^", "**")
-    # Convertir x3 a x**3 de forma segura
     exp = re.sub(r'([a-zA-Z])(\d+)', r'\1**\2', exp)
-    # Convertir 2x a 2*x
     exp = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', exp)
     return exp
 
@@ -106,7 +113,7 @@ with st.sidebar:
                 st.session_state.mostrar_solucion = False
                 st.rerun()
     else:
-        st.markdown("<p style='font-size: 13px; color: #94A38B;'>No hay problemas analizados aún.</p>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size: 13px; color: #94A3B8;'>No hay problemas analizados aún.</p>", unsafe_allow_html=True)
         
     st.markdown("---")
     st.markdown("##### 🏛️ Universidad Industrial de Santander")
@@ -130,23 +137,25 @@ if st.session_state.problema_activo:
     
     st.markdown("---")
     st.markdown("### 🧠 Pistas y Tips de Resolución (Paso 1):")
+    
+    # Tips claros y con lenguaje humano, sin etiquetas rotas
     st.markdown("""
-        <div class="tip-card">
-            <p><b>💡 Tip 1: Entiende qué buscas optimizar.</b><br>
-            La función objetivo ya está dada. Recuerda que para hallar máximos o mínimos locales, el primer paso fundamental es encontrar dónde la pendiente de la curva se vuelve cero.</p>
+        <div class="tip-box">
+            <p><b>💡 Tip 1: ¿Qué representa la función?</b><br>
+            La verdad, cuando nos dan la función ya lista, lo primero es pensar que estamos buscando los puntos más altos (cima) o más bajos (valle) de esa curva. No te afanes, piensa en el comportamiento general de la gráfica.</p>
             
-            <p><b>💡 Tip 2: Aplica la regla de la potencia para derivar.</b><br>
-            Piensa en cómo derivar cada término por separado: baja el exponente a multiplicar y réstale 1. Por ejemplo, la derivada de un término cúbico te quedará con grado 2.</p>
+            <p><b>💡 Tip 2: La derivada como la pendiente.</b><br>
+            Recuerda que derivar significa hallar cómo cambia la función en cada instante. Si bajas los exponentes a multiplicar y le restas uno, vas a encontrar la fórmula de la pendiente ($f'(x)$).</p>
             
-            <p><b>💡 Tip 3: Iguala la primera derivada a cero.</b><br>
-            Los puntos críticos salen de resolver $f'(x) = 0$. Intenta factorizar o simplificar la ecuación cuadrática resultante antes de buscar las raíces.</p>
+            <p><b>💡 Tip 3: ¿De dónde salen los puntos críticos?</b><br>
+            Imagínate la cumbre de una colina o el fondo de un valle: justo ahí, la pendiente es plana, es decir, vale cero. Por eso igualamos la primera derivada a cero para despejar nuestra $x$.</p>
             
-            <p><b>💡 Tip 4: Usa el criterio de la segunda derivada.</b><br>
-            Una vez hallados los puntos $x$, evalúalos en $f''(x)$. Si el resultado es negativo, es una cima (máximo); si es positivo, es un valle (mínimo).</p>
+            <p><b>💡 Tip 4: El toque final con la segunda derivada.</b><br>
+            Para estar seguros de si es un máximo o un mínimo sin dibujar toda la gráfica, tomamos la segunda derivada ($f''(x)$) y evaluamos nuestros puntos. Si da negativo, es una cima; si da positivo, es un valle.</p>
         </div>
     """, unsafe_allow_html=True)
     
-    # Botón para revelar el paso a paso completo
+    # Botón para revelar el paso a paso completo estilo la 3ra foto
     if not st.session_state.mostrar_solucion:
         if st.button("🔍 Ver Solución Paso a Paso Completa"):
             st.session_state.mostrar_solucion = True
@@ -155,17 +164,8 @@ if st.session_state.problema_activo:
         st.markdown("---")
         st.markdown("### 📊 Solución Paso a Paso Completa:")
         
-        st.write("**1. Función Objetivo:**")
-        st.latex(f"f(x) = {prob['f_latex']}")
-        
-        st.write("**2. Primera Derivada ($f'(x)$):**")
-        st.latex(f"f'(x) = {prob['f_prime_latex']}")
-        
-        st.write("**3. Segunda Derivada ($f''(x)$):**")
-        st.latex(f"f''(x) = {prob['f_double_latex']}")
-        
-        st.write("**4. Puntos Críticos y Criterio de la Segunda Derivada:**")
-        st.markdown(prob['resultado_texto'], unsafe_allow_html=True)
+        # HTML renderizado con bloques limpios idénticos al formato solicitado
+        st.markdown(prob['html_solucion'], unsafe_allow_html=True)
         
         if st.button("Ocultar solución"):
             st.session_state.mostrar_solucion = False
@@ -180,12 +180,12 @@ else:
     st.markdown("""
         <div class="chat-welcome-card">
             <h2>¿Qué problema vamos a resolver hoy?</h2>
-            <p style="color: #64748B; font-size: 15px;">Ingresa tu función (ej: <code>2x3 - 15x2 + 36x</code>). Primero te daremos tips de razonamiento y pistas para que pienses el ejercicio, y luego podrás revelar la solución paso a paso.</p>
+            <p style="color: #64748B; font-size: 15px;">Ingresa tu función (ej: <code>2x3 - 15x2 + 36*x</code>). Primero te daremos las pistas para que lo pienses con calma, y luego podrás desplegar el desglose analítico completo paso a paso.</p>
         </div>
     """, unsafe_allow_html=True)
 
     st.markdown("#### ✍️ Planta tu caso de estudio:")
-    enunciado_user = st.text_area("Enunciado o descripción del problema:", placeholder="Ej: Maximizar una caja sin tapa...", height=100)
+    enunciado_user = st.text_area("Enunciado o descripción del problema:", placeholder="Ej: Analizar los puntos extremos de la función...", height=100)
     funcion_str = st.text_input("Función objetivo $f(x)$:", placeholder="Ej: 2x3 - 15x2 + 36*x")
     
     col_btn1, col_btn2 = st.columns([1, 4])
@@ -203,7 +203,20 @@ else:
                 f_double_prime = sp.diff(f_prime, x)
                 puntos_criticos = sp.solve(f_prime, x)
                 
-                res_texto_guardado = ""
+                # Construir el HTML detallado paso a paso exactamente como en la foto 3
+                html_paso_a_paso = f"""
+                <div class="step-box">
+                    <p style="font-weight: 700; color: #004D20; font-size: 16px;">Paso 1: Primera derivada y puntos críticos</p>
+                    <p>Se calcula la primera derivada de la función para encontrar las pendientes iguales a cero:</p>
+                    <div style="text-align: center; margin: 15px 0;">
+                        <code>f'(x) = {sp.latex(f_prime)}</code>
+                    </div>
+                    <p>Igualando la primera derivada a cero para hallar los puntos críticos:</p>
+                </div>
+                """
+                
+                # Añadir puntos críticos y evaluación detallada
+                detalle_evaluacion = ""
                 if puntos_criticos:
                     for pc in puntos_criticos:
                         try:
@@ -211,29 +224,44 @@ else:
                             val_y = float(f_expr.subs(x, pc).evalf())
                             x_num = float(pc.evalf())
                             
-                            if val_seg < 0:
-                                msg = f"• Para $x = {x_num:.4f}$: evaluamos en $f''(x)$ y obtenemos ${val_seg:.2f} < 0$. Por lo tanto, hay un **MÁXIMO LOCAL**, con un valor óptimo de $f(x) = {val_y:.4f}$.<br>"
-                                res_texto_guardado += msg
-                            elif val_seg > 0:
-                                msg = f"• Para $x = {x_num:.4f}$: evaluamos en $f''(x)$ y obtenemos ${val_seg:.2f} > 0$. Por lo tanto, hay un **MÍNIMO LOCAL**, con un valor óptimo de $f(x) = {val_y:.4f}$.<br>"
-                                res_texto_guardado += msg
-                            else:
-                                msg = f"• En $x = {pc}$, la segunda derivada es cero; no es concluyente.<br>"
-                                res_texto_guardado += msg
+                            tipo_extremo = "máximo local" if val_seg < 0 else "mínimo local"
+                            signo_str = "< 0" if val_seg < 0 else "> 0"
+                            
+                            detalle_evaluacion += f"""
+                            <div class="step-box">
+                                <p style="font-weight: 700; color: #1E293B;">Para $x = {x_num:.2f}$:</p>
+                                <p>Evaluamos en la segunda derivada: $f''({x_num:.2f}) = {val_seg:.2f}$ ({signo_str}).</p>
+                                <p>Como el resultado es {'negativo' if val_seg < 0 else 'positivo'}, existe un <b>{tipo_extremo}</b> en este punto.</p>
+                                <p>Evaluando en la función original: $f({x_num:.2f}) = {val_y:.2f}$.</p>
+                                <p><b>Coordenada del extremo:</b> $({x_num:.2f}, {val_y:.2f})$</p>
+                            </div>
+                            """
                         except:
-                            msg = f"• Punto crítico en $x = {pc}$.<br>"
-                            res_texto_guardado += msg
+                            detalle_evaluacion += f"<p>Punto crítico en $x = {pc}$</p>"
                 else:
-                    res_texto_guardado = "No se encontraron puntos críticos reales."
-                    
+                    detalle_evaluacion = "<p>No se encontraron puntos críticos reales.</p>"
+                
+                html_paso_a_paso += f"""
+                <div class="step-box">
+                    <p style="font-weight: 700; color: #004D20; font-size: 16px;">Paso 2: Segunda derivada</p>
+                    <p>Se obtiene la segunda derivada para aplicar el criterio correspondiente:</p>
+                    <div style="text-align: center; margin: 15px 0;">
+                        <code>f''(x) = {sp.latex(f_double_prime)}</code>
+                    </div>
+                </div>
+                
+                <div class="step-box">
+                    <p style="font-weight: 700; color: #004D20; font-size: 16px;">Paso 3: Evaluación y clasificación de extremos</p>
+                    {detalle_evaluacion}
+                </div>
+                """
+                
                 # Guardar en sesión
                 nuevo_item = {
                     "titulo": enunciado_user[:30] if enunciado_user else f"Función: {funcion_str[:20]}",
                     "enunciado": enunciado_user if enunciado_user else "Sin enunciado redactado.",
                     "f_latex": sp.latex(f_expr),
-                    "f_prime_latex": sp.latex(f_prime),
-                    "f_double_latex": sp.latex(f_double_prime),
-                    "resultado_texto": res_texto_guardado
+                    "html_solucion": html_paso_a_paso
                 }
                 st.session_state.problema_activo = nuevo_item
                 st.session_state.mostrar_solucion = False
