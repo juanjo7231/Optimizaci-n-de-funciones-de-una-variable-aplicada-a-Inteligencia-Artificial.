@@ -190,7 +190,7 @@ with col_head2:
         <div class="uis-header" style="margin-bottom: 0px;">
             <div>
                 <h3 style="margin: 0; color: white; font-size: 18px;">🧠 Asistente IA de Optimización</h3>
-                <span style="font-size: 12px; color: #E2F6EC;">Ingeniería en Inteligencia Artificial • UIS</span>
+                <span style="font-size: 12px; color: #E2F6EC;">Ingeniería en Inteligencia Artificial • UIS (En una sola variable)</span>
             </div>
             <span style="background-color: #005E27; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; color: white;">En línea</span>
         </div>
@@ -245,7 +245,7 @@ if st.session_state.problema_activo:
 
 else:
     with st.chat_message("assistant", avatar="🧠"):
-        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función en una sola variable quieres que analizemos hoy?")
+        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función en una sola variable quieres que analicemos hoy?")
     
     user_input = st.chat_input("Coloca tu función en una sola variable...")
     
