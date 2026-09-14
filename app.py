@@ -151,7 +151,7 @@ with st.sidebar:
     else:
         st.info("💡 Sube tu 'logo_uis.webp' al directorio.")
         
-    st.markdown("### 🤖 Sesiones de Chat")
+    st.markdown("### Sesiones de Chat")
     if st.button("➕ Nueva Conversación", use_container_width=True):
         st.session_state.problema_activo = None
         st.session_state.mostrar_solucion = False
