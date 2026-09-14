@@ -8,22 +8,22 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- ESTILOS CSS PERSONALIZADOS (Estilo Dashboard Moderno Verde y Blanco UIS) ---
+# --- ESTILOS CSS PERSONALIZADOS (Corrección de temas y diseño UI limpio) ---
 st.markdown("""
     <style>
-    /* Fondo general de la aplicación */
+    /* Forzar un esquema limpio y claro en toda la app */
     .stApp {
-        background-color: #F4F8F5;
-        color: #2C3E50;
+        background-color: #F8FAF9;
+        color: #1E293B;
     }
     
-    /* Barra lateral */
+    /* Barra lateral limpia */
     [data-testid="stSidebar"] {
         background-color: #FFFFFF;
         border-right: 1px solid #E2E8F0;
     }
     
-    /* Botones principales y acentos (Verde UIS) */
+    /* Botones principales estilo UI (Verde UIS) */
     .stButton > button {
         background-color: #007A33;
         color: white;
@@ -38,30 +38,32 @@ st.markdown("""
         color: white;
     }
     
-    /* Tarjetas contenedoras limpias (Efecto UI moderno) */
-    div.element-container {
-        color: #2C3E50;
+    /* Asegurar visibilidad perfecta en inputs de texto y áreas de texto */
+    .stTextInput input, .stTextArea textarea {
+        background-color: #FFFFFF !important;
+        color: #1E293B !important;
+        border: 1px solid #CBD5E1 !important;
+        border-radius: 8px !important;
     }
     
-    /* Cajas de texto y inputs */
-    .stTextInput > div > div > input, .stTextArea > div > div > textarea {
-        border-radius: 8px;
-        border: 1px solid #CBD5E1;
-        background-color: #FFFFFF;
+    /* Etiquetas de los inputs visibles y oscuras */
+    .stTextInput label, .stTextArea label, .stSelectbox label {
+        color: #1E293B !important;
+        font-weight: 500;
     }
     
-    /* Títulos y textos */
+    /* Títulos institucionales */
     h1, h2, h3 {
-        color: #004D20;
+        color: #004D20 !important;
     }
     
-    /* Tarjeta de bienvenida estilo chat */
+    /* Tarjeta de bienvenida central */
     .chat-welcome-card {
         background-color: #FFFFFF;
         padding: 2.5rem;
         border-radius: 16px;
         border: 1px solid #E2E8F0;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
         text-align: center;
         margin-bottom: 2rem;
     }
@@ -74,7 +76,7 @@ if "historial_problemas" not in st.session_state:
 if "problema_activo" not in st.session_state:
     st.session_state.problema_activo = None
 
-# --- BARRA LATERAL (Estilo Historial de Chat) ---
+# --- BARRA LATERAL ---
 with st.sidebar:
     try:
         st.image("logo_uis.webp", use_container_width=True)
@@ -106,9 +108,9 @@ with st.sidebar:
 # Definir la variable simbólica principal
 x = sp.Symbol('x', real=True)
 
-# --- CUERPO PRINCIPAL (Dashboard Estilo Chat / Asistente IA) ---
+# --- CUERPO PRINCIPAL ---
 
-# Cabecera superior simulando la barra del dashboard de referencia
+# Cabecera superior
 col_head1, col_head2 = st.columns([6, 1])
 with col_head1:
     st.markdown("### 🤖 Asistente IA - Optimización de Una Variable")
@@ -117,7 +119,7 @@ with col_head2:
 
 st.markdown("---")
 
-# Si hay un problema activo seleccionado del historial o recién calculado
+# Si hay un problema activo seleccionado del historial
 if st.session_state.problema_activo:
     prob = st.session_state.problema_activo
     st.markdown(f"#### 📄 Análisis: {prob['titulo']}")
@@ -129,14 +131,14 @@ if st.session_state.problema_activo:
     st.latex(f"f'(x) = {prob['f_prime_latex']}")
     st.latex(f"f''(x) = {prob['f_double_latex']}")
     
-    st.markdown(prob['resultado_texto'])
+    st.markdown(prob['resultado_texto'], unsafe_allow_html=True)
     
     if st.button("⬅️ Volver al chat principal"):
         st.session_state.problema_activo = None
         st.rerun()
 
 else:
-    # Pantalla principal limpia tipo tarjeta central de bienvenida
+    # Tarjeta de bienvenida central estilo UI moderna
     st.markdown("""
         <div class="chat-welcome-card">
             <h2>¿Qué problema vamos a resolver hoy?</h2>
@@ -144,80 +146,77 @@ else:
         </div>
     """, unsafe_allow_html=True)
 
-    # Formulario central de entrada estilo input de chat moderno
-    with st.container():
-        st.markdown("#### ✍️ Planta tu caso de estudio:")
-        enunciado_user = st.text_area("Enunciado o descripción del problema:", placeholder="Ej: Encontrar las dimensiones de un rectángulo de área máxima con 100m de cerca...", height=100)
-        funcion_str = st.text_input("Función objetivo $f(x)$ (Usa `**` para potencias y `*` para multiplicar):", placeholder="Ej: x*(100 - 2*x)")
+    # Contenedor de entrada
+    st.markdown("#### ✍️ Planta tu caso de estudio:")
+    enunciado_user = st.text_area("Enunciado o descripción del problema:", placeholder="Ej: Encontrar las dimensiones de un rectángulo de área máxima con 100m de cerca...", height=100)
+    funcion_str = st.text_input("Función objetivo $f(x)$ (Usa `**` para potencias y `*` para multiplicar):", placeholder="Ej: x*(100 - 2*x)")
+    
+    col_btn1, col_btn2 = st.columns([1, 4])
+    with col_btn1:
+        ejecutar = st.button("⚡ Analizar", use_container_width=True)
         
-        col_btn1, col_btn2 = st.columns([1, 4])
-        with col_btn1:
-            ejecutar = st.button("⚡ Analizar", use_container_width=True)
-            
-        if ejecutar:
-            if not funcion_str.strip():
-                st.warning("⚠️ Por favor ingresa una función matemática válida.")
-            else:
-                try:
-                    f_expr = sp.sympify(funcion_str)
-                    f_prime = sp.diff(f_expr, x)
-                    f_double_prime = sp.diff(f_prime, x)
-                    puntos_criticos = sp.solve(f_prime, x)
-                    
-                    # Generar texto de resultado estructurado
-                    resultado_html = ""
-                    st.markdown("---")
-                    st.markdown("### 📊 Resultados del Análisis:")
-                    
-                    st.write("**1. Función Objetivo:**")
-                    st.latex(f"f(x) = {sp.latex(f_expr)}")
-                    
-                    st.write("**2. Primera Derivada ($f'(x)$):**")
-                    st.latex(f"f'(x) = {sp.latex(f_prime)}")
-                    
-                    st.write("**3. Segunda Derivada ($f''(x)$):**")
-                    st.latex(f"f''(x) = {sp.latex(f_double_prime)}")
-                    
-                    res_texto_guardado = ""
-                    if puntos_criticos:
-                        st.write("**4. Puntos Críticos y Criterio:**")
-                        for pc in puntos_criticos:
-                            st.latex(f"x = {sp.latex(pc)}")
-                            try:
-                                val_seg = float(f_double_prime.subs(x, pc).evalf())
-                                val_y = float(f_expr.subs(x, pc).evalf())
-                                x_num = float(pc.evalf())
-                                
-                                if val_seg < 0:
-                                    msg = f"✅ **MÁXIMO LOCAL** hallado en $x \\approx {x_num:.4f}$, con un valor óptimo de $f(x) = {val_y:.4f}$ (Segunda derivada negativa: {val_seg:.2f})."
-                                    st.success(msg)
-                                    res_texto_guardado += f"<br>{msg}"
-                                elif val_seg > 0:
-                                    msg = f"✅ **MÍNIMO LOCAL** hallado en $x \\approx {x_num:.4f}$, con un valor óptimo de $f(x) = {val_y:.4f}$ (Segunda derivada positiva: {val_seg:.2f})."
-                                    st.success(msg)
-                                    res_texto_guardado += f"<br>{msg}"
-                                else:
-                                    msg = f"⚠️ En $x = {pc}$, la segunda derivada es cero; no es concluyente."
-                                    st.warning(msg)
-                                    res_texto_guardado += f"<br>{msg}"
-                            except:
-                                msg = f"Punto crítico exacto en $x = {pc}$."
-                                st.info(msg)
+    if ejecutar:
+        if not funcion_str.strip():
+            st.warning("⚠️ Por favor ingresa una función matemática válida.")
+        else:
+            try:
+                f_expr = sp.sympify(funcion_str)
+                f_prime = sp.diff(f_expr, x)
+                f_double_prime = sp.diff(f_prime, x)
+                puntos_criticos = sp.solve(f_prime, x)
+                
+                st.markdown("---")
+                st.markdown("### 📊 Resultados del Análisis:")
+                
+                st.write("**1. Función Objetivo:**")
+                st.latex(f"f(x) = {sp.latex(f_expr)}")
+                
+                st.write("**2. Primera Derivada ($f'(x)$):**")
+                st.latex(f"f'(x) = {sp.latex(f_prime)}")
+                
+                st.write("**3. Segunda Derivada ($f''(x)$):**")
+                st.latex(f"f''(x) = {sp.latex(f_double_prime)}")
+                
+                res_texto_guardado = ""
+                if puntos_criticos:
+                    st.write("**4. Puntos Críticos y Criterio:**")
+                    for pc in puntos_criticos:
+                        st.latex(f"x = {sp.latex(pc)}")
+                        try:
+                            val_seg = float(f_double_prime.subs(x, pc).evalf())
+                            val_y = float(f_expr.subs(x, pc).evalf())
+                            x_num = float(pc.evalf())
+                            
+                            if val_seg < 0:
+                                msg = f"✅ **MÁXIMO LOCAL** hallado en $x \\approx {x_num:.4f}$, con un valor óptimo de $f(x) = {val_y:.4f}$ (Segunda derivada negativa: {val_seg:.2f})."
+                                st.success(msg)
                                 res_texto_guardado += f"<br>{msg}"
-                    else:
-                        st.warning("No se encontraron puntos críticos reales.")
-                        res_texto_guardado = "No se encontraron puntos críticos reales."
-                        
-                    # Guardar en el historial de sesión
-                    nuevo_item = {
-                        "titulo": enunciado_user[:30] if enunciado_user else f"Función: {funcion_str[:20]}",
-                        "enunciado": enunciado_user if enunciado_user else "Sin enunciado redactado.",
-                        "f_latex": sp.latex(f_expr),
-                        "f_prime_latex": sp.latex(f_prime),
-                        "f_double_latex": sp.latex(f_double_prime),
-                        "resultado_texto": res_texto_guardado
-                    }
-                    st.session_state.historial_problemas.append(nuevo_item)
+                            elif val_seg > 0:
+                                msg = f"✅ **MÍNIMO LOCAL** hallado en $x \\approx {x_num:.4f}$, con un valor óptimo de $f(x) = {val_y:.4f}$ (Segunda derivada positiva: {val_seg:.2f})."
+                                st.success(msg)
+                                res_texto_guardado += f"<br>{msg}"
+                            else:
+                                msg = f"⚠️ En $x = {pc}$, la segunda derivada es cero; no es concluyente."
+                                st.warning(msg)
+                                res_texto_guardado += f"<br>{msg}"
+                        except:
+                            msg = f"Punto crítico exacto en $x = {pc}$."
+                            st.info(msg)
+                            res_texto_guardado += f"<br>{msg}"
+                else:
+                    st.warning("No se encontraron puntos críticos reales.")
+                    res_texto_guardado = "No se encontraron puntos críticos reales."
                     
-                except Exception as e:
-                    st.error(f"⚠️ Error al interpretar la función. Revisa la sintaxis. Detalle: {e}")
+                # Guardar en el historial de sesión
+                nuevo_item = {
+                    "titulo": enunciado_user[:30] if enunciado_user else f"Función: {funcion_str[:20]}",
+                    "enunciado": enunciado_user if enunciado_user else "Sin enunciado redactado.",
+                    "f_latex": sp.latex(f_expr),
+                    "f_prime_latex": sp.latex(f_prime),
+                    "f_double_latex": sp.latex(f_double_prime),
+                    "resultado_texto": res_texto_guardado
+                }
+                st.session_state.historial_problemas.append(nuevo_item)
+                
+            except Exception as e:
+                st.error(f"⚠️ Error al interpretar la función. Revisa la sintaxis. Detalle: {e}")
