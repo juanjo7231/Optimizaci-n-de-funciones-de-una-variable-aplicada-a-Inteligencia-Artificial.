@@ -203,7 +203,6 @@ if st.session_state.problema_activo:
     prob = st.session_state.problema_activo
     
     with st.chat_message("user", avatar="👤"):
-        st.markdown(f"**Enunciado / Contexto:** {prob['enunciado']}")
         st.markdown(f"**Función a optimizar:**")
         st.latex(f"f(x) = {prob['funcion_latex']}")
         
@@ -246,16 +245,15 @@ if st.session_state.problema_activo:
 
 else:
     with st.chat_message("assistant", avatar="🧠"):
-        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función matemática o problema de optimización **en una sola variable** quieres que analicemos hoy?")
+        st.markdown("¡Hola! Soy tu asistente de cálculo y optimización de la UIS. ¿Qué función $f(x)$ en una sola variable quieres que analicemos hoy?")
     
-    user_input = st.chat_input("Escribe tu función f(x) o el contexto del problema...")
+    user_input = st.chat_input("Escribe tu función f(x)...")
     
     if user_input:
         if "x" not in user_input.lower():
             st.warning("⚠️ Recuerda ingresar la expresión en términos de la variable **x**.")
         else:
             funcion_str = user_input
-            enunciado_user = "Análisis directo desde el chat."
             
             try:
                 funcion_saneada = limpiar_sintaxis_matematica(funcion_str)
@@ -322,8 +320,7 @@ else:
                         })
                     
                     nuevo_item = {
-                        "titulo": f"Función: {funcion_str[:15]}",
-                        "enunciado": enunciado_user,
+                        "titulo": f"f(x): {funcion_str[:15]}",
                         "funcion_latex": sp.latex(f_expr),
                         "pasos_narrativos": pasos_narrativos
                     }
