@@ -3,6 +3,29 @@ import sympy as sp
 import re
 import os
 
+# Oculta completamente la barra superior nativa con todos sus botones molestos
+st.markdown("""
+    <style>
+    header {
+        display: none !important;
+    }
+    /* Ajusta el contenido para que no quede el espacio vacío arriba */
+    .block-container {
+        padding-top: 2rem !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Botón personalizado para abrir/cerrar la barra lateral usando un hack de JavaScript
+
+st.markdown("""
+    <div style="margin-bottom: 1rem;">
+        <button onclick="parent.document.querySelector('[data-testid=\\'collapsedControl\\']').click()" 
+                style="background: #007A33; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+            📂 Mostrar / Ocultar Menú Lateral
+        </button>
+    </div>
+""", unsafe_allow_html=True)
 # --- ESTILOS CSS GENERALES (Sin tocar la barra superior) ---
 st.markdown("""
     <style>
