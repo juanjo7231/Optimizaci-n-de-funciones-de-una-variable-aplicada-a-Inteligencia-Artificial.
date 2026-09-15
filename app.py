@@ -3,6 +3,16 @@ import sympy as sp
 import re
 import os
 
+# Oculta el menú de hamburguesa, el pie de página y la barra superior de herramientas
+hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    </style>
+    """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 # Configuración de la página
 st.set_page_config(
     page_title="Asistente UIS - IA de Optimización",
