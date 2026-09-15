@@ -5,7 +5,19 @@ import os
 
 # --- CORRECCIÓN DEFINITIVA DE LA CABECERA ---
 # Oculta los iconos de la derecha pero mantiene la cabecera abierta y el botón izquierdo vivo
-
+st.markdown("""
+    <style>
+    /* Oculta el botón de Share si aparece */
+    button[kind="header"] {
+        display: none !important;
+    }
+    
+    /* Oculta los iconos individuales de la derecha (estrella, lápiz, github, menú desplegable de 3 puntos) */
+    [data-testid="stToolbar"] > div {
+        display: none !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 # --- ESTILOS CSS CON ANIMACIÓN DE PARPADEO VERDE EN LA ENTRADA ---
 st.markdown("""
     <style>
