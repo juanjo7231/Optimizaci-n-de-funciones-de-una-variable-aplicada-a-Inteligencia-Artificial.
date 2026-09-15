@@ -6,19 +6,10 @@ import os
 # Dejamos la cabecera limpia pero sin forzar contenedores que oculten el menú lateral
 st.markdown("""
     <style>
-    /* Oculta únicamente los iconos de la derecha (Share, GitHub, etc.) dentro de la barra de herramientas */
-    [data-testid="stToolbar"] {
-        display: none !important;
-    }
-    
-    /* Oculta el botón de Manage app de abajo a la derecha */
-    .stAppDeployButton {
-        display: none !important;
-    }
-
-    /* Asegura que la cabecera y el botón izquierdo queden intactos y funcionales */
+    /* Forzamos a que la cabecera y el botón de la barra lateral vuelvan a estar visibles */
     [data-testid="stHeader"] {
-        background: transparent !important;
+        display: flex !important;
+        visibility: visible !important;
     }
     [data-testid="collapsedControl"] {
         display: block !important;
