@@ -2,27 +2,36 @@ import streamlit as st
 import sympy as sp
 import re
 import os
+import streamlit.components.v1 as components
 
-# remover cinta de arriba 
+# 1. CSS para los iconos de arriba a la derecha y ocultar inicialmente el de abajo
 clean_ui_style = """
     <style>
-    /* 1. Oculta los iconos de la esquina superior derecha */
     [data-testid="stHeader"] [data-testid="stToolbar"] {
         display: none !important;
     }
-    
-    /* 2. Oculta el botón flotante de Manage app usando múltiples selectores de fuerza */
-    .stAppDeployButton,
-    button[kind="headerNoPadding"],
-    div:has(> a[href*="streamlit.io/cloud"]),
-    [data-testid="manage-app-button"] {
+    .stAppDeployButton {
         display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
     }
     </style>
     """
 st.markdown(clean_ui_style, unsafe_allow_html=True)
+
+# 2. Script de JavaScript para cazar y destruir el botón de "Manage app" si insiste en aparecer
+hide_manage_script = """
+    <script>
+    const removeManageApp = () => {
+        const doc = window.parent.document;
+        const deployButton = doc.querySelector('.stAppDeployButton');
+        if (deployButton) {
+            deployButton.remove();
+        }
+    };
+    // Ejecuta al cargar y vigila si vuelve a aparecer
+    setInterval(removeManageApp, 100);
+    </script>
+    """
+components.html(hide_manage_script, height=0, width=0)
 
 # Configuración de la página
 st.set_page_config(
