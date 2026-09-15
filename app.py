@@ -5,18 +5,16 @@ import os
 
 st.markdown("""
     <style>
-    /* Crea una barra invisible o capa que cubre la mitad derecha de la cabecera superior, 
-       ocultando los botones de la derecha pero dejando intacto el botón izquierdo de la barra lateral */
-    header::after {
-        content: "";
-        position: fixed;
-        top: 0;
-        right: 0;
-        width: 50vw;
-        height: 3.5rem;
-        background-color: #F8FAFC; /* Usa el mismo color de fondo de tu app para que los tape */
-        z-index: 99999;
-        pointer-events: none; /* Permite hacer clic a través si fuera necesario, o quítalo si quieres bloquearlos por completo */
+    /* Corta visualmente la barra superior justo en el 50% de la pantalla hacia la derecha,
+       haciendo desaparecer cualquier botón que esté de la mitad en adelante */
+    header {
+        max-width: 50vw !important;
+        overflow: hidden !important;
+    }
+    
+    /* Asegura que el contenedor principal de la aplicación no se quede desplazado */
+    .main .block-container {
+        max-width: 100% !important;
     }
     </style>
 """, unsafe_allow_html=True)
