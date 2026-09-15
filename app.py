@@ -6,7 +6,7 @@ import os
 # Dejamos la cabecera limpia pero sin forzar contenedores que oculten el menú lateral
 st.markdown("""
     <style>
-    /* 1. Oculta únicamente los botones/iconos de la esquina superior derecha */
+    /* 1. Oculta únicamente los iconos de la esquina superior derecha */
     [data-testid="stHeader"] [data-testid="stToolbar"] {
         display: none !important;
     }
@@ -14,6 +14,12 @@ st.markdown("""
     /* 2. Oculta el botón de Manage app de abajo a la derecha */
     .stAppDeployButton {
         display: none !important;
+    }
+    
+    /* 3. Mantiene el botón de la izquierda siempre visible para abrir y cerrar sin perderlo */
+    [data-testid="collapsedControl"] {
+        display: block !important;
+        visibility: visible !important;
     }
     </style>
     """, unsafe_allow_html=True)
