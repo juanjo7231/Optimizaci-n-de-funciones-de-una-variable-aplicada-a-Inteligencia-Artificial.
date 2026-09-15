@@ -15,6 +15,11 @@ st.markdown("""
         display: block !important;
         visibility: visible !important;
     }
+    
+    /* Oculta únicamente los iconos de la derecha (Share, GitHub, etc.) */
+    [data-testid="stToolbar"] {
+        display: none !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
