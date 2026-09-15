@@ -7,14 +7,11 @@ import os
 # Oculta los iconos de la derecha pero mantiene la cabecera abierta y el botón izquierdo vivo
 st.markdown("""
     <style>
-    /* Oculta el botón de Share si aparece */
-    button[kind="header"] {
-        display: none !important;
-    }
-    
-    /* Oculta los iconos individuales de la derecha (estrella, lápiz, github, menú desplegable de 3 puntos) */
-    [data-testid="stToolbar"] > div {
-        display: none !important;
+    /* Oculta los elementos de la barra de herramientas derecha sin alterar el layout principal */
+    header [data-testid="stToolbar"] {
+        visibility: hidden !important;
+        width: 0px !important;
+        overflow: hidden !important;
     }
     </style>
     """, unsafe_allow_html=True)
