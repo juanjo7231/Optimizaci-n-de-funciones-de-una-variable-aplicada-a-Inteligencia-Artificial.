@@ -13,6 +13,7 @@ fix_toolbar_clean = """
     </style>
     """
 st.markdown(fix_toolbar_clean, unsafe_allow_html=True)
+
 # Configuración de la página
 st.set_page_config(
     page_title="Asistente UIS - IA de Optimización",
