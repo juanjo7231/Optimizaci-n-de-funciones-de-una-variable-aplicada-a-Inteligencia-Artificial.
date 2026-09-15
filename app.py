@@ -4,16 +4,15 @@ import re
 import os
 
 # remover cinta de arriba 
-hide_manage_app = """
+fix_toolbar_clean = """
     <style>
-    /* Oculta el botón flotante de "Manage app" de la esquina inferior derecha */
-    .stAppDeployButton {
+    /* Oculta los elementos decorativos y de despliegue de la derecha pero deja libre el botón izquierdo */
+    [data-testid="stHeader"] > div:nth-child(2) {
         display: none !important;
     }
     </style>
     """
-st.markdown(hide_manage_app, unsafe_allow_html=True)
-
+st.markdown(fix_toolbar_clean, unsafe_allow_html=True)
 # Configuración de la página
 st.set_page_config(
     page_title="Asistente UIS - IA de Optimización",
