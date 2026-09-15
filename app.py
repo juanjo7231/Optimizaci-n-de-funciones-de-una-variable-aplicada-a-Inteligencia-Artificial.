@@ -3,10 +3,11 @@ import sympy as sp
 import re
 import os
 
-fix_everything = """
+# Dejamos la cabecera limpia pero sin forzar contenedores que oculten el menú lateral
+reset_header = """
     <style>
-    /* Oculta los iconos de compartir y GitHub arriba a la derecha */
-    [data-testid="stHeader"] [data-testid="stToolbar"] {
+    /* Oculta únicamente los botones flotantes de la derecha (Share, GitHub, etc.) */
+    [data-testid="stToolbar"] {
         display: none !important;
     }
     
@@ -14,16 +15,9 @@ fix_everything = """
     .stAppDeployButton {
         display: none !important;
     }
-
-    /* Restaura y protege estrictamente el botón de la barra lateral izquierda */
-    header [data-testid="collapsedControl"] {
-        display: flex !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
     </style>
     """
-st.markdown(fix_everything, unsafe_allow_html=True)
+st.markdown(reset_header, unsafe_allow_html=True)
 
 # Configuración de la página
 st.set_page_config(
