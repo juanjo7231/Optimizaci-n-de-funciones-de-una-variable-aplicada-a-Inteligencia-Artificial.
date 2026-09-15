@@ -3,20 +3,6 @@ import sympy as sp
 import re
 import os
 
-st.markdown("""
-    <style>
-    /* Oculta únicamente los iconos individuales de la derecha (estrella, lápiz, github, compartir, 3 puntos) */
-    [data-testid="stToolbar"] * {
-        display: none !important;
-    }
-    
-    /* Asegura que el contenedor de la barra superior no colapse el espacio del botón izquierdo */
-    [data-testid="stToolbar"] {
-        background: transparent !important;
-        pointer-events: none !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
 # --- ESTILOS CSS GENERALES (Sin tocar la barra superior) ---
 st.markdown("""
     <style>
