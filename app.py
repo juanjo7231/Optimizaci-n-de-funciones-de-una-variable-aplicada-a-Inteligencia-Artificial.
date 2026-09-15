@@ -13,6 +13,15 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+# 1. Tu código que borra perfectamente los iconos de la derecha sin romper nada más
+st.markdown("""
+    <style>
+    [data-testid="stHeader"] [data-testid="stToolbar"] {
+        display: none !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # --- ESTILOS CSS CON ANIMACIÓN DE PARPADEO VERDE EN LA ENTRADA ---
 st.markdown("""
     <style>
