@@ -6,23 +6,22 @@ import os
 # Dejamos la cabecera limpia pero sin forzar contenedores que oculten el menú lateral
 st.markdown("""
     <style>
-    /* Forzamos a que la cabecera y el botón de la barra lateral vuelvan a estar visibles */
-    [data-testid="stHeader"] {
-        display: flex !important;
-        visibility: visible !important;
-    }
-    [data-testid="collapsedControl"] {
-        display: block !important;
-        visibility: visible !important;
-    }
-    
     /* Oculta únicamente los iconos de la derecha (Share, GitHub, etc.) */
     [data-testid="stToolbar"] {
         display: none !important;
     }
+    
+    /* Oculta el botón de Manage app de abajo a la derecha */
+    .stAppDeployButton {
+        display: none !important;
+    }
+    
+    /* Hacemos que la cabecera sea invisible pero que mantenga su espacio para no romper el botón de abrir/cerrar */
+    [data-testid="stHeader"] {
+        background-color: rgba(0,0,0,0) !important;
+    }
     </style>
     """, unsafe_allow_html=True)
-
 # Configuración de la página
 st.set_page_config(
     page_title="Asistente UIS - IA de Optimización",
