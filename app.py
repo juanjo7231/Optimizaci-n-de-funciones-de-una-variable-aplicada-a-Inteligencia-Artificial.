@@ -3,10 +3,7 @@ import sympy as sp
 import re
 import os
 
-# --- CORRECCIÓN DEFINITIVA DE LA CABECERA ---
-# Oculta los iconos de la derecha pero mantiene la cabecera abierta y el botón izquierdo vivo
-
-# --- ESTILOS CSS CON ANIMACIÓN DE PARPADEO VERDE EN LA ENTRADA ---
+# --- ESTILOS CSS GENERALES (Sin tocar la barra superior) ---
 st.markdown("""
     <style>
     @keyframes pulsoEntradaVerde {
