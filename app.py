@@ -3,16 +3,7 @@ import sympy as sp
 import re
 import os
 
-st.markdown("""
-    <style>
-    /* Oculta por completo el bloque de herramientas de la derecha sin afectar el botón de la izquierda */
-    header div.stActionButton, 
-    header [data-testid="stToolbar"] {
-        display: none !important;
-        visibility: hidden !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
+
 # --- ESTILOS CSS GENERALES (Sin tocar la barra superior) ---
 st.markdown("""
     <style>
