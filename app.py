@@ -6,14 +6,19 @@ import os
 # remover cinta de arriba 
 clean_ui_style = """
     <style>
-    /* 1. Oculta únicamente los iconos y botones de la esquina superior derecha */
+    /* 1. Oculta los iconos de la esquina superior derecha */
     [data-testid="stHeader"] [data-testid="stToolbar"] {
         display: none !important;
     }
     
-    /* 2. Oculta el botón flotante de "Manage app" de abajo a la derecha */
-    .stAppDeployButton {
+    /* 2. Oculta el botón flotante de Manage app usando múltiples selectores de fuerza */
+    .stAppDeployButton,
+    button[kind="headerNoPadding"],
+    div:has(> a[href*="streamlit.io/cloud"]),
+    [data-testid="manage-app-button"] {
         display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
     }
     </style>
     """
