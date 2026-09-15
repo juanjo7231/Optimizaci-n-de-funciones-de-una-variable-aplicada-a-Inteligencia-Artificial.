@@ -3,15 +3,15 @@ import sympy as sp
 import re
 import os
 
-hide_toolbar_buttons = """
+hide_right_toolbar_only = """
     <style>
-    /* Oculta los elementos interactivos del menú superior derecho de Streamlit */
-    [data-testid="stHeader"] [data-testid="stToolbar"] {
+    /* Oculta únicamente los botones del lado derecho de la barra superior */
+    [data-testid="stHeader"] > div:last-child {
         display: none !important;
     }
     </style>
     """
-st.markdown(hide_toolbar_buttons, unsafe_allow_html=True)
+st.markdown(hide_right_toolbar_only, unsafe_allow_html=True)
 
 # Configuración de la página
 st.set_page_config(
