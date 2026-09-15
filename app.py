@@ -7,22 +7,11 @@ import os
 # Oculta los iconos de la derecha pero mantiene la cabecera abierta y el botón izquierdo vivo
 st.markdown("""
     <style>
-    /* 1. Oculta únicamente la barra de herramientas de la derecha */
-    [data-testid="stHeader"] [data-testid="stToolbar"] {
+    /* Oculta de forma individual cada icono de la derecha sin apagar la cabecera */
+    [data-testid="stToolbar"] button, 
+    [data-testid="stToolbar"] [data-testid="baseButton-header"],
+    header [data-testid="stToolbar"] {
         display: none !important;
-    }
-    
-    /* 2. Forzamos a que la cabecera conserve su espacio y estructura flexible */
-    [data-testid="stHeader"] {
-        display: flex !important;
-        visibility: visible !important;
-        background-color: transparent !important;
-    }
-    
-    /* 3. Aseguramos que el botón de la barra lateral izquierda nunca se esfume */
-    [data-testid="collapsedControl"] {
-        display: block !important;
-        visibility: visible !important;
     }
     </style>
     """, unsafe_allow_html=True)
