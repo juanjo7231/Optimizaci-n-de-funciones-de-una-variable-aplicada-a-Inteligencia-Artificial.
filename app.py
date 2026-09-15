@@ -3,14 +3,13 @@ import sympy as sp
 import re
 import os
 
-/* Oculta únicamente los botones de la derecha sin tocar para nada el botón de la barra lateral */
-    [data-testid="stToolbar"] {
-        display: none !important;
-    }
-
 # --- ESTILOS CSS GENERALES (Sin tocar la barra superior) ---
 st.markdown("""
     <style>
+    /* Oculta únicamente los botones de la derecha sin tocar para nada el botón de la barra lateral */
+    [data-testid="stToolbar"] {
+        display: none !important;
+    }
     @keyframes pulsoEntradaVerde {
         0% {
             box-shadow: 0 0 0 0 rgba(0, 122, 51, 0.7);
