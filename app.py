@@ -6,19 +6,25 @@ import os
 # Dejamos la cabecera limpia pero sin forzar contenedores que oculten el menú lateral
 st.markdown("""
     <style>
-    /* Oculta únicamente la barra de herramientas de la derecha en la cabecera */
+    /* 1. Oculta únicamente los iconos de la derecha */
     [data-testid="stHeader"] [data-testid="stToolbar"] {
         display: none !important;
     }
+    
+    /* 2. Forzamos a que la cabecera mantenga su espacio para no romper la estructura */
+    [data-testid="stHeader"] {
+        display: flex !important;
+        visibility: visible !important;
+        background-color: transparent !important;
+    }
+    
+    /* 3. Evitamos que el botón de la izquierda desaparezca al cerrar la barra */
+    [data-testid="collapsedControl"] {
+        display: block !important;
+        visibility: visible !important;
+    }
     </style>
     """, unsafe_allow_html=True)
-
-# Configuración de la página
-st.set_page_config(
-    page_title="Asistente UIS - IA de Optimización",
-    page_icon="🧠",
-    layout="centered"
-)
 
 # --- ESTILOS CSS CON ANIMACIÓN DE PARPADEO VERDE EN LA ENTRADA ---
 st.markdown("""
