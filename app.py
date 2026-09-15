@@ -3,6 +3,16 @@ import sympy as sp
 import re
 import os
 
+/* Oculta el botón de 'Manage app' de Streamlit Cloud en la esquina inferior derecha */
+    [data-testid="manage-app-button"] {
+        display: none !important;
+    }
+    
+    /* Por si acaso el contenedor del badge usa otra clase interna */
+    .viewerBadge_container__1QSob {
+        display: none !important;
+    }
+    
 # --- ESTILOS CSS GENERALES (Sin tocar la barra superior) ---
 st.markdown("""
     <style>
