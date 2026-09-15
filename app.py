@@ -3,6 +3,11 @@ import sympy as sp
 import re
 import os
 
+/* Oculta únicamente los botones de la derecha sin tocar para nada el botón de la barra lateral */
+    [data-testid="stToolbar"] {
+        display: none !important;
+    }
+
 # --- ESTILOS CSS GENERALES (Sin tocar la barra superior) ---
 st.markdown("""
     <style>
