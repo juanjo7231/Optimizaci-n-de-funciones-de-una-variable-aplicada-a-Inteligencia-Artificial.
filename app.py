@@ -5,16 +5,10 @@ import os
 
 st.markdown("""
     <style>
-    /* Corta visualmente la barra superior justo en el 50% de la pantalla hacia la derecha,
-       haciendo desaparecer cualquier botón que esté de la mitad en adelante */
-    header {
-        max-width: 50vw !important;
-        overflow: hidden !important;
-    }
-    
-    /* Asegura que el contenedor principal de la aplicación no se quede desplazado */
-    .main .block-container {
-        max-width: 100% !important;
+    /* Oculta únicamente la barra de herramientas derecha (Share, estrella, lápiz, GitHub, 3 puntos) 
+       sin afectar la posición del header ni el botón de la barra lateral */
+    [data-testid="stToolbar"] {
+        display: none !important;
     }
     </style>
 """, unsafe_allow_html=True)
