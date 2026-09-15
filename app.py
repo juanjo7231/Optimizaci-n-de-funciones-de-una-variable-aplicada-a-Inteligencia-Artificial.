@@ -4,15 +4,20 @@ import re
 import os
 
 # remover cinta de arriba 
-fix_toolbar_clean = """
+clean_ui_style = """
     <style>
-    /* Oculta los elementos decorativos y de despliegue de la derecha pero deja libre el botón izquierdo */
-    [data-testid="stHeader"] > div:nth-child(2) {
+    /* 1. Oculta únicamente los iconos y botones de la esquina superior derecha */
+    [data-testid="stHeader"] [data-testid="stToolbar"] {
+        display: none !important;
+    }
+    
+    /* 2. Oculta el botón flotante de "Manage app" de abajo a la derecha */
+    .stAppDeployButton {
         display: none !important;
     }
     </style>
     """
-st.markdown(fix_toolbar_clean, unsafe_allow_html=True)
+st.markdown(clean_ui_style, unsafe_allow_html=True)
 
 # Configuración de la página
 st.set_page_config(
