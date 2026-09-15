@@ -3,32 +3,15 @@ import sympy as sp
 import re
 import os
 
-# Oculta el menú de hamburguesa, el pie de página y la barra superior de herramientas
-# Oculta únicamente los botones de la esquina superior derecha (Share, GitHub, etc.)
-hide_top_right_buttons = """
+hide_toolbar_buttons = """
     <style>
-    /* Oculta los iconos de la barra superior derecha */
-    [data-testid="stHeader"] [data-testid="stToolbar"],
-    header [data-testid="stDecoration"],
-    .stApp > header {
-        background-color: transparent !important;
-    }
-    
-    /* Apunta específicamente al contenedor de los botones de la derecha */
-    [data-testid="stHeader"] right-aligned-actions,
-    header div.st-emotion-cache-12w0qpk,
-    [data-testid="stHeader"] action-buttons {
-        display: none !important;
-    }
-    
-    /* Alternativa general por clases de Streamlit para los botones de la esquina */
-    header [class*="viewerBadge"],
-    header [class*="profileContainer"] {
+    /* Oculta los elementos interactivos del menú superior derecho de Streamlit */
+    [data-testid="stHeader"] [data-testid="stToolbar"] {
         display: none !important;
     }
     </style>
     """
-st.markdown(hide_top_right_buttons, unsafe_allow_html=True)
+st.markdown(hide_toolbar_buttons, unsafe_allow_html=True)
 
 # Configuración de la página
 st.set_page_config(
