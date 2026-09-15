@@ -5,31 +5,13 @@ import os
 
 # Dejamos la cabecera limpia pero sin forzar contenedores que oculten el menú lateral
 st.markdown("""
-
     <style>
-
-    /* Forzamos a que la cabecera y el botón de la barra lateral vuelvan a estar visibles */
-
-    [data-testid="stHeader"] {
-
-        display: flex !important;
-
-        visibility: visible !important;
-
+    /* Oculta únicamente la barra de herramientas de la derecha en la cabecera */
+    [data-testid="stHeader"] [data-testid="stToolbar"] {
+        display: none !important;
     }
-
-    [data-testid="collapsedControl"] {
-
-        display: block !important;
-
-        visibility: visible !important;
-
-    }
-
     </style>
-
-    """, unsafe_allow_html=True) 
-
+    """, unsafe_allow_html=True)
 
 # Configuración de la página
 st.set_page_config(
