@@ -3,26 +3,20 @@ import sympy as sp
 import re
 import os
 
-safe_clean_ui = """
+clean_ui = """
     <style>
-    /* Oculta los iconos de compartir/github arriba a la derecha */
-    [data-testid="stHeader"] [data-testid="stToolbar"] {
+    /* Oculta los botones de la esquina superior derecha (Share, GitHub, etc.) */
+    header [data-testid="stToolbar"] {
         display: none !important;
     }
     
-    /* Oculta el botón "Manage app" de abajo a la derecha de forma segura */
-    div.stAppDeployButton {
+    /* Oculta el botón de Manage app abajo a la derecha */
+    .stAppDeployButton {
         display: none !important;
-    }
-    
-    /* Forzamos a que el botón de la barra lateral izquierda NUNCA se toque */
-    [data-testid="collapsedControl"] {
-        display: block !important;
-        visibility: visible !important;
     }
     </style>
     """
-st.markdown(safe_clean_ui, unsafe_allow_html=True)
+st.markdown(clean_ui, unsafe_allow_html=True)
 
 # Configuración de la página
 st.set_page_config(
