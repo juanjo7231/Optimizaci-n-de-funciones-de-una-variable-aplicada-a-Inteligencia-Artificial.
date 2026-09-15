@@ -3,15 +3,6 @@ import sympy as sp
 import re
 import os
 
-st.markdown("""
-    <style>
-    /* Oculta únicamente la barra de herramientas derecha (Share, estrella, lápiz, GitHub, 3 puntos) 
-       sin afectar la posición del header ni el botón de la barra lateral */
-    [data-testid="stToolbar"] {
-        display: none !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
 # --- ESTILOS CSS GENERALES (Sin tocar la barra superior) ---
 st.markdown("""
     <style>
