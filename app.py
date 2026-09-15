@@ -4,20 +4,19 @@ import re
 import os
 
 # Dejamos la cabecera limpia pero sin forzar contenedores que oculten el menú lateral
-reset_header = """
+st.markdown("""
     <style>
-    /* Oculta únicamente los botones flotantes de la derecha (Share, GitHub, etc.) */
-    [data-testid="stToolbar"] {
-        display: none !important;
+    /* Forzamos a que la cabecera y el botón de la barra lateral vuelvan a estar visibles */
+    [data-testid="stHeader"] {
+        display: flex !important;
+        visibility: visible !important;
     }
-    
-    /* Oculta el botón de Manage app de abajo a la derecha */
-    .stAppDeployButton {
-        display: none !important;
+    [data-testid="collapsedControl"] {
+        display: block !important;
+        visibility: visible !important;
     }
     </style>
-    """
-st.markdown(reset_header, unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 # Configuración de la página
 st.set_page_config(
