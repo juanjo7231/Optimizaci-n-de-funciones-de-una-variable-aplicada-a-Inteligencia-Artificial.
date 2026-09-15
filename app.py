@@ -2,6 +2,23 @@ import streamlit as st
 import sympy as sp
 import re
 import os
+import streamlit.components.v1 as components
+
+# Truco de JavaScript para borrar solo los iconos de la derecha y dejar el menú lateral intacto
+components.html("""
+    <script>
+    function limpiarBarra() {
+        // Buscamos el contenedor de la derecha dentro de la barra superior de Streamlit
+        const toolbar = window.parent.document.querySelector('[data-testid="stToolbar"]');
+        if (toolbar) {
+            // Ocultamos o removemos los botones internos de la derecha
+            toolbar.style.display = 'none';
+        }
+    }
+    // Ejecutamos la función cada segundo por si Streamlit vuelve a renderizar la barra
+    setInterval(limpiarBarra, 500);
+    </script>
+""", height=0)
 
 # --- ESTILOS CSS GENERALES (Sin tocar la barra superior) ---
 st.markdown("""
