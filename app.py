@@ -2,36 +2,27 @@ import streamlit as st
 import sympy as sp
 import re
 import os
-import streamlit.components.v1 as components
 
-# 1. CSS para los iconos de arriba a la derecha y ocultar inicialmente el de abajo
-clean_ui_style = """
+safe_clean_ui = """
     <style>
+    /* Oculta los iconos de compartir/github arriba a la derecha */
     [data-testid="stHeader"] [data-testid="stToolbar"] {
         display: none !important;
     }
-    .stAppDeployButton {
+    
+    /* Oculta el botón "Manage app" de abajo a la derecha de forma segura */
+    div.stAppDeployButton {
         display: none !important;
+    }
+    
+    /* Forzamos a que el botón de la barra lateral izquierda NUNCA se toque */
+    [data-testid="collapsedControl"] {
+        display: block !important;
+        visibility: visible !important;
     }
     </style>
     """
-st.markdown(clean_ui_style, unsafe_allow_html=True)
-
-# 2. Script de JavaScript para cazar y destruir el botón de "Manage app" si insiste en aparecer
-hide_manage_script = """
-    <script>
-    const removeManageApp = () => {
-        const doc = window.parent.document;
-        const deployButton = doc.querySelector('.stAppDeployButton');
-        if (deployButton) {
-            deployButton.remove();
-        }
-    };
-    // Ejecuta al cargar y vigila si vuelve a aparecer
-    setInterval(removeManageApp, 100);
-    </script>
-    """
-components.html(hide_manage_script, height=0, width=0)
+st.markdown(safe_clean_ui, unsafe_allow_html=True)
 
 # Configuración de la página
 st.set_page_config(
