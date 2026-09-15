@@ -4,14 +4,31 @@ import re
 import os
 
 # Oculta el menú de hamburguesa, el pie de página y la barra superior de herramientas
-hide_streamlit_style = """
+# Oculta únicamente los botones de la esquina superior derecha (Share, GitHub, etc.)
+hide_top_right_buttons = """
     <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    /* Oculta los iconos de la barra superior derecha */
+    [data-testid="stHeader"] [data-testid="stToolbar"],
+    header [data-testid="stDecoration"],
+    .stApp > header {
+        background-color: transparent !important;
+    }
+    
+    /* Apunta específicamente al contenedor de los botones de la derecha */
+    [data-testid="stHeader"] right-aligned-actions,
+    header div.st-emotion-cache-12w0qpk,
+    [data-testid="stHeader"] action-buttons {
+        display: none !important;
+    }
+    
+    /* Alternativa general por clases de Streamlit para los botones de la esquina */
+    header [class*="viewerBadge"],
+    header [class*="profileContainer"] {
+        display: none !important;
+    }
     </style>
     """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+st.markdown(hide_top_right_buttons, unsafe_allow_html=True)
 
 # Configuración de la página
 st.set_page_config(
