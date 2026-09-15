@@ -5,22 +5,6 @@ import os
 
 # --- CORRECCIÓN DEFINITIVA DE LA CABECERA ---
 # Oculta los iconos de la derecha pero mantiene la cabecera abierta y el botón izquierdo vivo
-st.markdown("""
-    <style>
-    /* Oculta los iconos individuales de la barra superior derecha */
-    [data-testid="stToolbar"] {
-        visibility: hidden !important;
-        display: none !important;
-    }
-    
-    /* Fuerza a que el botón de la barra lateral izquierda aparezca siempre y funcione */
-    [data-testid="collapsedControl"] {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
 # --- ESTILOS CSS CON ANIMACIÓN DE PARPADEO VERDE EN LA ENTRADA ---
 st.markdown("""
