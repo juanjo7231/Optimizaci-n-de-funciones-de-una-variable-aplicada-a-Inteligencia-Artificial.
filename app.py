@@ -3,24 +3,30 @@ import sympy as sp
 import re
 import os
 
-# Dejamos la cabecera limpia pero sin forzar contenedores que oculten el menú lateral
+# --- CORRECCIÓN DEFINITIVA DE LA CABECERA ---
+# Oculta los iconos de la derecha pero mantiene la cabecera abierta y el botón izquierdo vivo
 st.markdown("""
     <style>
-    /* Oculta únicamente la barra de herramientas de la derecha en la cabecera */
+    /* 1. Oculta únicamente la barra de herramientas de la derecha */
     [data-testid="stHeader"] [data-testid="stToolbar"] {
         display: none !important;
+    }
+    
+    /* 2. Forzamos a que la cabecera conserve su espacio y estructura flexible */
+    [data-testid="stHeader"] {
+        display: flex !important;
+        visibility: visible !important;
+        background-color: transparent !important;
+    }
+    
+    /* 3. Aseguramos que el botón de la barra lateral izquierda nunca se esfume */
+    [data-testid="collapsedControl"] {
+        display: block !important;
+        visibility: visible !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# 1. Tu código que borra perfectamente los iconos de la derecha sin romper nada más
-st.markdown("""
-    <style>
-    [data-testid="stHeader"] [data-testid="stToolbar"] {
-        display: none !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
 # --- ESTILOS CSS CON ANIMACIÓN DE PARPADEO VERDE EN LA ENTRADA ---
 st.markdown("""
