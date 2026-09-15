@@ -3,6 +3,23 @@ import sympy as sp
 import re
 import os
 
+st.markdown("""
+    <style>
+    /* Crea una barra invisible o capa que cubre la mitad derecha de la cabecera superior, 
+       ocultando los botones de la derecha pero dejando intacto el botón izquierdo de la barra lateral */
+    header::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 50vw;
+        height: 3.5rem;
+        background-color: #F8FAFC; /* Usa el mismo color de fondo de tu app para que los tape */
+        z-index: 99999;
+        pointer-events: none; /* Permite hacer clic a través si fuera necesario, o quítalo si quieres bloquearlos por completo */
+    }
+    </style>
+""", unsafe_allow_html=True)
 # --- ESTILOS CSS GENERALES (Sin tocar la barra superior) ---
 st.markdown("""
     <style>
