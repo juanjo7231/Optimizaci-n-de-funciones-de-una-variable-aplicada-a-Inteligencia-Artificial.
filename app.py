@@ -3,7 +3,10 @@ import sympy as sp
 import re
 import os
 
-/* Oculta el botón de 'Manage app' de Streamlit Cloud en la esquina inferior derecha */
+# --- ESTILOS CSS GENERALES (Sin tocar la barra superior) ---
+st.markdown("""
+    <style>
+    /* Oculta el botón de 'Manage app' de Streamlit Cloud en la esquina inferior derecha */
     [data-testid="manage-app-button"] {
         display: none !important;
     }
@@ -13,9 +16,6 @@ import os
         display: none !important;
     }
     
-# --- ESTILOS CSS GENERALES (Sin tocar la barra superior) ---
-st.markdown("""
-    <style>
     @keyframes pulsoEntradaVerde {
         0% {
             box-shadow: 0 0 0 0 rgba(0, 122, 51, 0.7);
