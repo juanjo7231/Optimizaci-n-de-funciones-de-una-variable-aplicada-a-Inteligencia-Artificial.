@@ -4,15 +4,15 @@ import re
 import os
 
 # remover cinta de arriba 
-hide_right_toolbar_only = """
+fix_toolbar_clean = """
     <style>
-    /* Oculta únicamente los botones del lado derecho de la barra superior */
-    [data-testid="stHeader"] > div:last-child {
+    /* Oculta los elementos decorativos y de despliegue de la derecha pero deja libre el botón izquierdo */
+    [data-testid="stHeader"] > div:nth-child(2) {
         display: none !important;
     }
     </style>
     """
-st.markdown(hide_right_toolbar_only, unsafe_allow_html=True)
+st.markdown(fix_toolbar_clean, unsafe_allow_html=True)
 
 # Configuración de la página
 st.set_page_config(
