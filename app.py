@@ -3,15 +3,20 @@ import sympy as sp
 import re
 import os
 
-hide_right_toolbar_only = """
+# remover cinta de arriba 
+fix_sidebar_toggle = """
     <style>
-    /* Oculta únicamente los botones del lado derecho de la barra superior */
-    [data-testid="stHeader"] > div:last-child {
-        display: none !important;
+    /* Oculta los botones de la derecha pero preserva el botón de la barra lateral izquierda */
+    [data-testid="stHeader"] [data-testid="stToolbar"] {
+        visibility: hidden;
+    }
+    /* Asegura que el botón de colapsar la barra lateral siga visible y funcional */
+    [data-testid="collapsedControl"] {
+        visibility: visible !important;
     }
     </style>
     """
-st.markdown(hide_right_toolbar_only, unsafe_allow_html=True)
+st.markdown(fix_sidebar_toggle, unsafe_allow_html=True)
 
 # Configuración de la página
 st.set_page_config(
